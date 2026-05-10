@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Concepts — Natthapath Damrongsri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --ink:            #0A0908;
+  --surface:        #141312;
+  --bone:           #E8E3D8;
+  --paper:          #F5F2EA;
+  --ash:            #A8A499;
+  --dim:            #86827A;
+  --hairline:       #262524;
+  --hairline-light: #D9D3C5;
+  --ember:          #D4A276;
+  --teal:           #4A6B6A;
+  --ease:           cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+::selection { background: var(--dim); color: var(--bone); }
+
+/* ── Concept switcher nav ────────────────────────────────────────────── */
+#concept-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 3rem;
+  background: rgba(10,9,8,0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--hairline);
+}
+.nav-brand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--bone);
+  text-decoration: none;
+}
+.concept-tabs {
+  display: flex; list-style: none; gap: 0;
+}
+.concept-tabs a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--dim);
+  text-decoration: none;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.concept-tabs a:hover { color: var(--ash); }
+.concept-tabs a.active { color: var(--ember); border-color: var(--hairline); }
+
+/* ── Section base ────────────────────────────────────────────────────── */
+.concept-section {
+  height: 100vh; min-height: 660px;
+  position: relative; overflow: hidden;
+}
+
+/* canvas bg (shared) */
+.c-canvas {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CONCEPT A — THE INDEX
+══════════════════════════════════════════════════════════════════════ */
+#concept-a {
+  background: var(--ink); color: var(--bone);
+  display: grid; grid-template-columns: 1.05fr 0.95fr;
+}
+.ca-left {
+  position: relative; z-index: 1;
+  padding: 7.5rem 3.5rem 4rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-right: 1px solid var(--hairline);
+  background: rgba(10,9,8,0.18);
+  backdrop-filter: blur(2px);
+}
+.ca-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ash);
+  display: flex; align-items: center; gap: 14px;
+  opacity: 0;
+}
+.ca-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--dim); }
+.ca-left h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 200; font-size: clamp(64px, 9.5vw, 148px);
+  line-height: 0.92; letter-spacing: -0.038em; color: var(--bone);
+  opacity: 0; transform: translateY(20px);
+}
+.ca-left h1 em { font-style: italic; color: var(--ash); font-weight: 200; }
+.ca-footer {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 2rem; opacity: 0;
+}
+.ca-tagline { max-width: 340px; font-size: 14px; line-height: 1.65; color: var(--ash); }
+.ca-scroll-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dim);
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; white-space: nowrap;
+  transition: color .25s;
+}
+.ca-scroll-hint::before { content: ''; width: 32px; height: 1px; background: var(--dim); display: block; transition: background .25s; }
+.ca-scroll-hint:hover { color: var(--bone); }
+.ca-scroll-hint:hover::before { background: var(--bone); }
+
+.ca-right {
+  position: relative; z-index: 1;
+  padding: 7.5rem 3.5rem 4rem;
+  display: flex; flex-direction: column;
+}
+.ca-index-head {
+  display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dim);
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--hairline);
+  opacity: 0;
+}
+.ca-row {
+  display: grid; grid-template-columns: 36px 1fr auto;
+  align-items: baseline; gap: 1.5rem;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid var(--hairline);
+  cursor: default;
+  opacity: 0; transform: translateX(12px);
+  transition: padding-left .3s var(--ease);
+}
+.ca-row:hover { padding-left: 0.4rem; }
+.ca-row .rn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--dim); letter-spacing: 0.14em;
+}
+.ca-row .rname {
+  font-family: 'Fraunces', serif;
+  font-weight: 300; font-size: clamp(18px, 2vw, 28px);
+  letter-spacing: -0.015em; color: var(--bone);
+  transition: color .25s;
+}
+.ca-row:hover .rname { color: var(--ember); }
+.ca-row.feat .rname { color: var(--ember); }
+.ca-row .rdomain {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CONCEPT B — THE DASHBOARD
+══════════════════════════════════════════════════════════════════════ */
+#concept-b {
+  background: var(--ink); color: var(--bone);
+  display: grid; grid-template-columns: 260px 1fr;
+}
+.cb-rail {
+  position: relative; z-index: 1;
+  border-right: 1px solid var(--hairline);
+  padding: 7.5rem 2rem 3rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  background: rgba(10,9,8,0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.cb-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; letter-spacing: 0.2em; color: var(--bone);
+  margin-bottom: 2.5rem;
+  opacity: 0;
+}
+.cb-rail-nav { display: flex; flex-direction: column; gap: 1.4rem; }
+.cb-rail-nav span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0;
+}
+.cb-rail-nav span.active { color: var(--ember); }
+.cb-rail-nav span.active::before { content: '▸ '; }
+.cb-status {
+  border-top: 1px solid var(--hairline); padding-top: 1.4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--dim);
+  display: flex; flex-direction: column; gap: 0.55rem;
+  opacity: 0;
+}
+.cb-dot {
+  display: inline-block; width: 5px; height: 5px;
+  background: var(--ember); border-radius: 50%;
+  margin-right: 7px; vertical-align: middle;
+}
+.cb-main {
+  position: relative; z-index: 1;
+  padding: 7.5rem 3.5rem 3rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.cb-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dim);
+  padding-bottom: 1.4rem; border-bottom: 1px solid var(--hairline);
+  opacity: 0;
+}
+.cb-crumbs span:not(:last-child)::after { content: ' / '; color: var(--hairline); margin: 0 8px; }
+.cb-crumbs span:last-child { color: var(--bone); }
+.cb-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 200; font-size: clamp(38px, 6vw, 104px);
+  line-height: 0.92; letter-spacing: -0.035em; color: var(--bone);
+  margin-top: 2.5rem;
+  opacity: 0; transform: translateY(16px);
+}
+.cb-name em { font-style: italic; color: var(--ember); font-weight: 200; }
+.cb-sub {
+  margin-top: 1.4rem; max-width: 660px;
+  font-size: 15px; line-height: 1.65; color: var(--ash);
+  opacity: 0; transform: translateY(10px);
+}
+.cb-metrics {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--hairline);
+  margin-top: 2.5rem;
+}
+.cb-metric {
+  padding: 1.4rem 1.4rem 0 0;
+  border-right: 1px solid var(--hairline);
+  opacity: 0; transform: translateY(8px);
+}
+.cb-metric:last-child { border-right: none; padding-right: 0; }
+.cb-metric .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 0.65rem;
+}
+.cb-metric .val {
+  font-family: 'Fraunces', serif;
+  font-weight: 300; font-size: clamp(22px, 2.8vw, 38px);
+  letter-spacing: -0.02em; color: var(--bone); line-height: 1.05;
+}
+.cb-metric .val .arr { color: var(--ember); }
+.cb-metric .ctx {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; color: var(--ash); margin-top: 0.45rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CONCEPT C — THE SPECIMEN (Light)
+══════════════════════════════════════════════════════════════════════ */
+#concept-c {
+  background: var(--paper); color: var(--ink);
+  display: grid; grid-template-columns: 220px 1fr;
+}
+.cc-meta {
+  border-right: 1px solid var(--hairline-light);
+  padding: 7.5rem 1.8rem 4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #6e6a60;
+  display: flex; flex-direction: column; gap: 1.6rem;
+  opacity: 0;
+}
+.cc-meta .mg { display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--hairline-light); padding-top: 0.9rem; }
+.cc-meta .mk { color: #a09c8e; }
+.cc-meta .mv { color: var(--ink); }
+.cc-meta .mv.avail { color: var(--teal); }
+.cc-stage {
+  padding: 7rem 4rem 4rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.cc-topbar {
+  display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #6e6a60;
+  padding-bottom: 1.2rem; border-bottom: 1px solid var(--hairline-light);
+  opacity: 0;
+}
+.cc-topbar b { color: var(--ink); font-weight: 500; }
+.cc-h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 200; font-size: clamp(60px, 9.5vw, 172px);
+  line-height: 0.86; letter-spacing: -0.045em; color: var(--ink);
+  margin-top: 2.5rem;
+  opacity: 0; transform: translateY(20px);
+}
+.cc-h1 em { font-style: italic; color: #6e6a60; font-weight: 200; }
+.cc-annot {
+  display: flex; align-items: flex-start; gap: 1.2rem;
+  margin-top: 2.2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #6e6a60; max-width: 800px;
+  opacity: 0;
+}
+.cc-annot::before {
+  content: ''; flex: 0 0 44px; height: 1px;
+  background: var(--hairline-light); margin-top: 8px;
+}
+.cc-footer {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-top: 1px solid var(--hairline-light); padding-top: 1.4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #6e6a60;
+  opacity: 0;
+}
+.cc-cta {
+  color: var(--ink);
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: color .25s;
+}
+.cc-cta::after { content: '→'; color: var(--teal); font-size: 14px; }
+.cc-cta:hover { color: var(--teal); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   CONCEPT D — BEFORE / AFTER
+══════════════════════════════════════════════════════════════════════ */
+#concept-d {
+  background: var(--ink);
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+.cd-pane {
+  padding: 7.5rem 3.5rem 4rem;
+  display: flex; flex-direction: column;
+}
+.cd-pane.before { background: #161514; }
+.cd-pane.after  { background: var(--ink); border-left: 1px solid var(--hairline); }
+.cd-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 2rem;
+  opacity: 0;
+}
+.cd-pane.after .cd-tag { color: var(--ember); }
+
+/* Before — noise grid */
+.cd-noise {
+  flex: 1;
+  display: grid; grid-template-columns: repeat(6,1fr);
+  grid-template-rows: repeat(8,1fr);
+  gap: 6px; opacity: 0;
+}
+.cd-noise span { background: transparent; border: 1px solid #2e2c2a; }
+.cd-noise span.fill { background: #2e2c2a; border-color: transparent; }
+.cd-noise span.line { border: none; background: linear-gradient(to right, #2e2c2a 60%, transparent 60%); height: 2px; align-self: center; }
+
+/* After — clean cards */
+.cd-clean {
+  flex: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 12px; opacity: 0;
+}
+.cd-card {
+  border: 1px solid var(--hairline);
+  padding: 1.1rem 1.2rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: background .25s;
+}
+.cd-card:hover { background: var(--surface); }
+.cd-card.full { grid-column: 1 / -1; }
+.cd-card.accent .cv { color: var(--ember); }
+.cd-card .cl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--dim);
+}
+.cd-card .cv {
+  font-family: 'Fraunces', serif;
+  font-weight: 300; font-size: clamp(18px, 2.2vw, 28px);
+  letter-spacing: -0.02em; color: var(--bone);
+}
+
+/* Overlay */
+.cd-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; pointer-events: none; padding: 0 4rem;
+}
+.cd-strip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ash); background: var(--ink);
+  padding: 10px 22px; border: 1px solid var(--hairline);
+  margin-bottom: 1.8rem;
+  opacity: 0;
+}
+.cd-overlay-h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 200; font-size: clamp(36px, 5.5vw, 92px);
+  line-height: 0.94; letter-spacing: -0.035em; color: var(--bone);
+  background: rgba(10,9,8,0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.8rem 3rem;
+  border: 1px solid var(--hairline);
+  opacity: 0; transform: scale(0.97);
+}
+.cd-overlay-h1 em { font-style: italic; color: var(--ember); font-weight: 200; }
+.cd-sub {
+  margin-top: 1.4rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   CONCEPT E — THE FRAMEWORK (Light)
+══════════════════════════════════════════════════════════════════════ */
+#concept-e {
+  background: var(--paper); color: var(--ink);
+  display: flex; flex-direction: column;
+}
+.ce-wrap {
+  padding: 6.5rem 4rem 3.5rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  height: 100%;
+}
+.ce-topbar {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-bottom: 1.4rem; border-bottom: 1px solid var(--hairline-light);
+  opacity: 0;
+}
+.ce-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: #6e6a60;
+}
+.ce-id b { color: var(--ink); font-weight: 500; display: block; margin-bottom: 4px; font-size: 14px; }
+.ce-right-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #6e6a60; text-align: right;
+}
+.ce-h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 200; font-size: clamp(32px, 4.5vw, 82px);
+  line-height: 0.94; letter-spacing: -0.03em; color: var(--ink);
+  margin: 1.8rem 0 1.2rem;
+  opacity: 0; transform: translateY(14px);
+}
+.ce-h1 em { font-style: italic; color: var(--teal); font-weight: 200; }
+.ce-flow {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid var(--hairline-light);
+  border-bottom: 1px solid var(--hairline-light);
+}
+.ce-step {
+  padding: 1.6rem 1.4rem 1.4rem;
+  border-right: 1px solid var(--hairline-light);
+  display: flex; flex-direction: column; gap: 0.85rem;
+  position: relative;
+  opacity: 0; transform: translateY(10px);
+}
+.ce-step:last-child { border-right: none; }
+.ce-step .sn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #a09c8e;
+}
+.ce-step h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 300; font-size: clamp(18px, 2.2vw, 30px);
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.ce-step p {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300; font-size: 13px; line-height: 1.55; color: #4a4743;
+}
+/* Mini bar glyphs */
+.ce-glyph {
+  height: 36px; display: flex; align-items: flex-end; gap: 3px; margin-top: 0.4rem;
+}
+.ce-glyph span { display: block; width: 7px; }
+.g-complexity span { background: #a09c8e; }
+.g-complexity span:nth-child(1){height:16px} .g-complexity span:nth-child(2){height:34px}
+.g-complexity span:nth-child(3){height:10px} .g-complexity span:nth-child(4){height:28px}
+.g-complexity span:nth-child(5){height:20px} .g-complexity span:nth-child(6){height:7px}
+.g-complexity span:nth-child(7){height:26px} .g-complexity span:nth-child(8){height:14px}
+.g-structure span { background: #6e6a60; height: 22px; }
+.g-clarity span { background: var(--ink); height: 22px; }
+.g-clarity span:nth-child(odd) { background: transparent; border-bottom: 1px solid var(--ink); height: 1px; align-self: flex-end; margin-bottom: 11px; }
+.g-impact span { background: var(--teal); }
+.g-impact span:nth-child(1){height:5px} .g-impact span:nth-child(2){height:11px}
+.g-impact span:nth-child(3){height:18px} .g-impact span:nth-child(4){height:24px}
+.g-impact span:nth-child(5){height:30px} .g-impact span:nth-child(6){height:36px}
+.g-impact span:nth-child(7){height:36px} .g-impact span:nth-child(8){height:36px}
+/* Step connector arrow */
+.ce-arrow {
+  position: absolute; right: -8px; top: 1.8rem;
+  width: 16px; height: 1px; background: #a09c8e; z-index: 1;
+}
+.ce-arrow::after {
+  content: ''; position: absolute; right: 0; top: -4px;
+  border-left: 6px solid #a09c8e;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+.ce-footer {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-top: 1.4rem;
+  opacity: 0;
+}
+.ce-lede {
+  max-width: 560px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; line-height: 1.6;
+  color: #4a4743; font-weight: 300;
+}
+.ce-cta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink); display: flex; align-items: center; gap: 12px;
+  text-decoration: none; transition: color .25s;
+  white-space: nowrap;
+}
+.ce-cta::after { content: '→'; color: var(--teal); font-size: 14px; }
+.ce-cta:hover { color: var(--teal); }
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ca-eyebrow, .ca-left h1, .ca-footer, .ca-index-head, .ca-row,
+  .cb-logo, .cb-rail-nav span, .cb-status, .cb-topbar,
+  .cb-name, .cb-sub, .cb-metric,
+  .cc-meta, .cc-topbar, .cc-h1, .cc-annot, .cc-footer,
+  .cd-tag, .cd-noise, .cd-clean, .cd-strip, .cd-overlay-h1, .cd-sub,
+  .ce-topbar, .ce-h1, .ce-step, .ce-footer {
+    opacity: 1 !important; transform: none !important;
+  }
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  #concept-nav { padding: 0.9rem 1.5rem; }
+  .concept-tabs { display: none; }
+
+  #concept-a { grid-template-columns: 1fr; }
+  .ca-right { display: none; }
+  .ca-left { padding: 6rem 1.5rem 3rem; }
+
+  #concept-b { grid-template-columns: 1fr; }
+  .cb-rail { display: none; }
+  .cb-main { padding: 6rem 1.5rem 2.5rem; }
+  .cb-metrics { grid-template-columns: 1fr 1fr; }
+
+  #concept-c { grid-template-columns: 1fr; }
+  .cc-meta { display: none; }
+  .cc-stage { padding: 6rem 1.5rem 3rem; }
+
+  #concept-d { grid-template-columns: 1fr; }
+  .cd-pane.before { display: none; }
+  .cd-pane.after { padding: 6rem 1.5rem 3rem; }
+  .cd-overlay { padding: 0 1.5rem; }
+  .cd-overlay-h1 { font-size: clamp(32px, 8vw, 64px); padding: 1.2rem 1.8rem; }
+
+  .ce-wrap { padding: 6rem 1.5rem 2.5rem; }
+  .ce-flow { grid-template-columns: 1fr 1fr; }
+  .ce-step:nth-child(2) { border-right: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════════════════════════════ -->
+<nav id="concept-nav" aria-label="Concept navigation">
+  <a href="#concept-a" class="nav-brand">N * D — Hero Concepts</a>
+  <ul class="concept-tabs">
+    <li><a href="#concept-a">A · The Index</a></li>
+    <li><a href="#concept-b">B · The Dashboard</a></li>
+    <li><a href="#concept-c">C · The Specimen</a></li>
+    <li><a href="#concept-d">D · Before / After</a></li>
+    <li><a href="#concept-e">E · The Framework</a></li>
+  </ul>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     A — THE INDEX
+═══════════════════════════════════════════════════════════════════ -->
+<section id="concept-a" class="concept-section">
+  <canvas class="c-canvas" id="canvas-a" aria-hidden="true"></canvas>
+
+  <div class="ca-left">
+    <div class="ca-eyebrow">Natthapath Damrongsri · UX/UI Designer · Bangkok</div>
+    <h1>
+      Making the<br>
+      complex,<br>
+      <em>clear.</em>
+    </h1>
+    <div class="ca-footer">
+      <p class="ca-tagline">SaaS · Dashboards · Enterprise systems · Workflow design. I design the interface between dense data and the people who need to act on it.</p>
+      <a href="#concept-b" class="ca-scroll-hint">SCROLL · 06 PROJECTS</a>
+    </div>
+  </div>
+
+  <div class="ca-right">
+    <div class="ca-index-head">
+      <span>SELECTED WORK / 2023 — 2025</span>
+      <span>06</span>
+    </div>
+    <div class="ca-row feat">
+      <span class="rn">01</span><span class="rname">Naaraan</span><span class="rdomain">E-COM · SAAS</span>
+    </div>
+    <div class="ca-row feat">
+      <span class="rn">02</span><span class="rname">Customer Data Platform</span><span class="rdomain">ENTERPRISE · DASHBOARD</span>
+    </div>
+    <div class="ca-row">
+      <span class="rn">03</span><span class="rname">Counter Service</span><span class="rdomain">RETAIL · POS</span>
+    </div>
+    <div class="ca-row">
+      <span class="rn">04</span><span class="rname">Time Attendance</span><span class="rdomain">HR · WORKFLOW</span>
+    </div>
+    <div class="ca-row">
+      <span class="rn">05</span><span class="rname">Showtime Swipe</span><span class="rdomain">PERSONAL · MOBILE</span>
+    </div>
+    <div class="ca-row">
+      <span class="rn">06</span><span class="rname">Groceries Delivered</span><span class="rdomain">UX RESEARCH</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     B — THE DASHBOARD
+═══════════════════════════════════════════════════════════════════ -->
+<section id="concept-b" class="concept-section">
+  <canvas class="c-canvas" id="canvas-b" aria-hidden="true"></canvas>
+
+  <aside class="cb-rail">
+    <div>
+      <div class="cb-logo">N · D / 001</div>
+      <nav class="cb-rail-nav">
+        <span class="active">Hero</span>
+        <span>Selected work</span>
+        <span>About</span>
+        <span>Certifications</span>
+        <span>Contact</span>
+      </nav>
+    </div>
+    <div class="cb-status">
+      <div><span class="cb-dot"></span>OPEN TO PROJECTS</div>
+      <div>BANGKOK · GMT+7</div>
+      <div>2025</div>
+    </div>
+  </aside>
+
+  <div class="cb-main">
+    <div class="cb-topbar">
+      <div class="cb-crumbs">
+        <span>portfolio</span><span>natthapath_d</span><span>hero</span>
+      </div>
+      <div>UX / UI DESIGNER</div>
+    </div>
+
+    <div>
+      <h1 class="cb-name">
+        Natthapath Damrongsri.<br>
+        <em>Designer of complex systems.</em>
+      </h1>
+      <p class="cb-sub">
+        Six shipped projects across SaaS, dashboards, retail POS, workforce management and e-commerce — measured in minutes saved, errors removed and tasks unblocked.
+      </p>
+      <div class="cb-metrics">
+        <div class="cb-metric">
+          <div class="lbl">CDP · SEGMENT BUILD</div>
+          <div class="val">23m <span class="arr">→</span> 8m</div>
+          <div class="ctx">Connex Business Online</div>
+        </div>
+        <div class="cb-metric">
+          <div class="lbl">7-ELEVEN · CHECKOUT</div>
+          <div class="val">−30%</div>
+          <div class="ctx">Avg. transaction time</div>
+        </div>
+        <div class="cb-metric">
+          <div class="lbl">TIME ATTENDANCE · PAYROLL</div>
+          <div class="val">−45%</div>
+          <div class="ctx">Reported errors</div>
+        </div>
+        <div class="cb-metric">
+          <div class="lbl">NAARAAN · ONBOARDING</div>
+          <div class="val">−40%</div>
+          <div class="ctx">Time to first listing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     C — THE SPECIMEN
+═══════════════════════════════════════════════════════════════════ -->
+<section id="concept-c" class="concept-section">
+
+  <aside class="cc-meta">
+    <div class="mg"><div class="mk">Designer</div><div class="mv">Natthapath Damrongsri</div></div>
+    <div class="mg"><div class="mk">Role</div><div class="mv">UX / UI Designer</div></div>
+    <div class="mg"><div class="mk">Domain</div><div class="mv">SaaS · Dashboards<br>Enterprise · POS</div></div>
+    <div class="mg"><div class="mk">Location</div><div class="mv">Bangkok, TH</div></div>
+    <div class="mg"><div class="mk">Index</div><div class="mv">06 projects</div></div>
+    <div class="mg"><div class="mk">Status</div><div class="mv avail">● Open to work</div></div>
+  </aside>
+
+  <div class="cc-stage">
+    <div class="cc-topbar">
+      <span><b>N · D</b> &nbsp; PORTFOLIO 2025</span>
+      <span>SHEET 01 / HERO · SPECIMEN</span>
+    </div>
+
+    <div>
+      <h1 class="cc-h1">
+        Making<br>
+        the complex,<br>
+        <em>clear.</em>
+      </h1>
+      <div class="cc-annot">
+        I work on products where information density is unavoidable — customer data platforms, POS terminals, workforce platforms, SaaS tools with too many variables and too many user types. My work is about structure, not style.
+      </div>
+    </div>
+
+    <div class="cc-footer">
+      <span>FRAUNCES 200 · ITALIC · OPTICAL SIZE 144</span>
+      <span class="cc-cta">READ THE CASE STUDIES</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     D — BEFORE / AFTER
+═══════════════════════════════════════════════════════════════════ -->
+<section id="concept-d" class="concept-section">
+
+  <div class="cd-pane before">
+    <div class="cd-tag">BEFORE · 14 DATA SOURCES, NO MODEL</div>
+    <div class="cd-noise">
+      <span></span><span class="fill"></span><span></span><span></span><span class="fill"></span><span></span>
+      <span class="line"></span><span></span><span class="fill"></span><span></span><span></span><span class="line"></span>
+      <span class="fill"></span><span></span><span></span><span class="line"></span><span></span><span></span>
+      <span></span><span class="line"></span><span class="fill"></span><span></span><span class="fill"></span><span></span>
+      <span></span><span></span><span class="line"></span><span></span><span></span><span class="fill"></span>
+      <span class="fill"></span><span></span><span></span><span class="fill"></span><span class="line"></span><span></span>
+      <span></span><span class="fill"></span><span class="line"></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span class="line"></span><span class="fill"></span><span></span>
+    </div>
+  </div>
+
+  <div class="cd-pane after">
+    <div class="cd-tag">AFTER · ONE CANVAS · 8 MIN BUILDS</div>
+    <div class="cd-clean">
+      <div class="cd-card full"><div class="cl">SEGMENT TIMELINE</div><div class="cv">Active · 12,408 profiles</div></div>
+      <div class="cd-card"><div class="cl">SOURCES</div><div class="cv">14 unified</div></div>
+      <div class="cd-card accent"><div class="cl">BUILD TIME</div><div class="cv">8 min</div></div>
+      <div class="cd-card"><div class="cl">MISSED SENDS</div><div class="cv">−30%</div></div>
+      <div class="cd-card"><div class="cl">CSV EXPORTS</div><div class="cv">0</div></div>
+    </div>
+  </div>
+
+  <div class="cd-overlay">
+    <div class="cd-strip">N · D &nbsp;/&nbsp; UX/UI · BANGKOK</div>
+    <h1 class="cd-overlay-h1">
+      The same product,<br>
+      <em>made navigable.</em>
+    </h1>
+    <div class="cd-sub">Customer Data Platform · Connex Business Online · 2024</div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     E — THE FRAMEWORK
+═══════════════════════════════════════════════════════════════════ -->
+<section id="concept-e" class="concept-section">
+  <div class="ce-wrap">
+
+    <div class="ce-topbar">
+      <div class="ce-id">
+        <b>Natthapath Damrongsri</b>
+        UX/UI Designer · Bangkok · 2025
+      </div>
+      <div class="ce-right-label">Method<br>Complexity → Impact</div>
+    </div>
+
+    <div>
+      <h1 class="ce-h1">
+        The work I do<br>
+        moves products from <em>complexity to clarity.</em>
+      </h1>
+
+      <div class="ce-flow">
+        <div class="ce-step">
+          <div class="sn">01 · Complexity</div>
+          <h3>The state I get hired into.</h3>
+          <p>14 data sources. 200 retail locations. Five years of feature debt. The interfaces have stopped reflecting the system.</p>
+          <div class="ce-glyph g-complexity"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="ce-arrow"></div>
+        </div>
+        <div class="ce-step">
+          <div class="sn">02 · Structure</div>
+          <h3>Research and architecture.</h3>
+          <p>Interviews, journey maps, IA, state logic. The frame the design will live inside, before any pixels.</p>
+          <div class="ce-glyph g-structure"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="ce-arrow"></div>
+        </div>
+        <div class="ce-step">
+          <div class="sn">03 · Clarity</div>
+          <h3>The interface itself.</h3>
+          <p>One canvas instead of three tools. Progressive disclosure instead of tab sprawl. State-aware patterns, documented.</p>
+          <div class="ce-glyph g-clarity"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="ce-arrow"></div>
+        </div>
+        <div class="ce-step">
+          <div class="sn">04 · Impact</div>
+          <h3>The number that came back.</h3>
+          <p>23 → 8 minutes per segment. −30% checkout time. −45% payroll errors. Measured, not asserted.</p>
+          <div class="ce-glyph g-impact"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ce-footer">
+      <p class="ce-lede">Six case studies follow this method. Read the one that matches the problem you're trying to solve.</p>
+      <a href="#" class="ce-cta">VIEW SELECTED WORK</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+'use strict';
+gsap.registerPlugin(ScrollTrigger);
+
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ── Nav active on scroll ─────────────────────────────────────────── */
+(function () {
+  const sections = document.querySelectorAll('.concept-section');
+  const links    = document.querySelectorAll('.concept-tabs a');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => io.observe(s));
+})();
+
+/* ── Smooth scroll ────────────────────────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+/* ── Canvas (interactive UIAtom grid) ─────────────────────────────── */
+function makeCanvas(id, parentSelector) {
+  const canvas = document.getElementById(id);
+  if (!canvas || reduced) return;
+  const parent = document.querySelector(parentSelector);
+  const ctx = canvas.getContext('2d');
+  let w, h, atoms = [];
+  const GAP = 60;
+  const mouse = { x: -1000, y: -1000 };
+
+  class Atom {
+    constructor(bx, by) {
+      this.bx = bx; this.by = by;
+      this.x  = bx + (Math.random() - .5) * 40;
+      this.y  = by + (Math.random() - .5) * 40;
+      this.t  = Math.floor(Math.random() * 4);
+      this.sz = 12 + Math.random() * 22;
+      this.rot = Math.random() * Math.PI;
+      this.a  = 0;
+    }
+    tick() {
+      const dx = mouse.x - this.bx, dy = mouse.y - this.by;
+      const d = Math.sqrt(dx*dx + dy*dy), R = 230;
+      if (d < R) {
+        this.a = (R - d) / R;
+        this.x += (this.bx - this.x) * .15;
+        this.y += (this.by - this.y) * .15;
+      } else {
+        this.a *= .9;
+        this.x += Math.sin(Date.now() * .001 + this.bx) * .18;
+        this.y += Math.cos(Date.now() * .001 + this.by) * .18;
+      }
+    }
+    draw() {
+      this.tick();
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      if (this.a < .5) ctx.rotate(this.rot + this.a * 2);
+      const al = .04 + this.a * .36;
+      ctx.strokeStyle = `rgba(232,227,216,${al})`;
+      ctx.fillStyle   = `rgba(212,162,118,${this.a * .14})`;
+      ctx.lineWidth = 1;
+      const s = this.sz;
+      switch (this.t) {
+        case 0: ctx.strokeRect(-s/2,-s/3,s,s/1.5); if(this.a>.6) ctx.fillRect(-s/2,-s/3,s/3,s/1.5); break;
+        case 1: ctx.beginPath(); ctx.moveTo(-s/2,0); ctx.lineTo(s/2,0); ctx.stroke(); break;
+        case 2: ctx.beginPath(); ctx.arc(0,0,s/4,0,Math.PI*2); ctx.stroke(); if(this.a>.5) ctx.fill(); break;
+        case 3: ctx.strokeRect(-10,-5,20,10); if(this.a>.7) ctx.fillRect(2,-3,6,6); break;
+      }
+      ctx.restore();
+    }
+  }
+
+  function resize() {
+    const r = parent.getBoundingClientRect();
+    w = canvas.width  = r.width;
+    h = canvas.height = r.height;
+    atoms = [];
+    for (let x = GAP; x < w; x += GAP)
+      for (let y = GAP; y < h; y += GAP)
+        atoms.push(new Atom(x, y));
+  }
+
+  function frame() {
+    ctx.fillStyle = '#0A0908';
+    ctx.fillRect(0, 0, w, h);
+    ctx.beginPath(); ctx.strokeStyle = 'rgba(232,227,216,0.02)';
+    for (let i = 0; i < w; i += GAP) { ctx.moveTo(i,0); ctx.lineTo(i,h); }
+    for (let i = 0; i < h; i += GAP) { ctx.moveTo(0,i); ctx.lineTo(w,i); }
+    ctx.stroke();
+    atoms.forEach(a => a.draw());
+    const vg = ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,Math.max(w,h)*.88);
+    vg.addColorStop(0,'transparent'); vg.addColorStop(1,'rgba(10,9,8,0.92)');
+    ctx.fillStyle = vg; ctx.fillRect(0,0,w,h);
+    requestAnimationFrame(frame);
+  }
+
+  parent.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - r.left;
+    mouse.y = e.clientY - r.top;
+  });
+  parent.addEventListener('mouseleave', () => { mouse.x = -1000; mouse.y = -1000; });
+
+  resize();
+  frame();
+  window.addEventListener('resize', resize);
+}
+
+makeCanvas('canvas-a', '#concept-a');
+makeCanvas('canvas-b', '#concept-b');
+
+
+/* ── GSAP animations per section (fire once on enter) ─────────────── */
+if (!reduced) {
+  const E = 'power4.out';
+  const C = 'cubic-bezier(0.22,1,0.36,1)';
+
+  /* Concept A */
+  ScrollTrigger.create({ trigger:'#concept-a', start:'top 80%', once:true, onEnter:() => {
+    const tl = gsap.timeline();
+    tl.to('.ca-eyebrow',    { opacity:1, duration:.7, ease:E, delay:.15 })
+      .to('.ca-left h1',    { opacity:1, y:0, duration:1.0, ease:C }, '-=.4')
+      .to('.ca-footer',     { opacity:1, duration:.7, ease:E }, '-=.5')
+      .to('.ca-index-head', { opacity:1, duration:.6, ease:E }, '-=.6')
+      .to('.ca-row',        { opacity:1, x:0, duration:.65, ease:C, stagger:.08 }, '-=.4');
+  }});
+
+  /* Concept B */
+  ScrollTrigger.create({ trigger:'#concept-b', start:'top 80%', once:true, onEnter:() => {
+    const tl = gsap.timeline();
+    tl.to('.cb-logo',           { opacity:1, duration:.6, ease:E, delay:.1 })
+      .to('.cb-rail-nav span',  { opacity:1, duration:.5, ease:E, stagger:.09 }, '-=.3')
+      .to('.cb-status',         { opacity:1, duration:.5, ease:E }, '-=.1')
+      .to('.cb-topbar',         { opacity:1, duration:.7, ease:E }, '-=.5')
+      .to('.cb-name',           { opacity:1, y:0, duration:1.0, ease:C }, '-=.4')
+      .to('.cb-sub',            { opacity:1, y:0, duration:.8, ease:E }, '-=.5')
+      .to('.cb-metric',         { opacity:1, y:0, duration:.7, ease:C, stagger:.1 }, '-=.4');
+  }});
+
+  /* Concept C */
+  ScrollTrigger.create({ trigger:'#concept-c', start:'top 80%', once:true, onEnter:() => {
+    const tl = gsap.timeline();
+    tl.to('.cc-meta',   { opacity:1, duration:.8, ease:E, delay:.1 })
+      .to('.cc-topbar', { opacity:1, duration:.6, ease:E }, '-=.5')
+      .to('.cc-h1',     { opacity:1, y:0, duration:1.1, ease:C }, '-=.4')
+      .to('.cc-annot',  { opacity:1, duration:.8, ease:E }, '-=.5')
+      .to('.cc-footer', { opacity:1, duration:.7, ease:E }, '-=.4');
+  }});
+
+  /* Concept D */
+  ScrollTrigger.create({ trigger:'#concept-d', start:'top 80%', once:true, onEnter:() => {
+    const tl = gsap.timeline();
+    tl.to('.cd-tag',          { opacity:1, duration:.6, ease:E, stagger:.15, delay:.1 })
+      .to('.cd-noise',        { opacity:.42, duration:.9, ease:E }, '-=.3')
+      .to('.cd-clean',        { opacity:1, duration:.9, ease:E }, '<')
+      .to('.cd-strip',        { opacity:1, duration:.6, ease:E }, '-=.4')
+      .to('.cd-overlay-h1',   { opacity:1, scale:1, duration:1.0, ease:C }, '-=.3')
+      .to('.cd-sub',          { opacity:1, duration:.6, ease:E }, '-=.4');
+  }});
+
+  /* Concept E */
+  ScrollTrigger.create({ trigger:'#concept-e', start:'top 80%', once:true, onEnter:() => {
+    const tl = gsap.timeline();
+    tl.to('.ce-topbar', { opacity:1, duration:.7, ease:E, delay:.1 })
+      .to('.ce-h1',     { opacity:1, y:0, duration:1.0, ease:C }, '-=.3')
+      .to('.ce-step',   { opacity:1, y:0, duration:.75, ease:C, stagger:.12 }, '-=.5')
+      .to('.ce-footer', { opacity:1, duration:.7, ease:E }, '-=.3');
+  }});
+}
+</script>
+</body>
+</html>
