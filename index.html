@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Natthapath Damrongsri - UX/UI Designer</title>
+<meta name="description" content="UX/UI Designer in Bangkok. Crafting user-centered solutions that improve usability, accessibility, and efficiency.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+/* -- Tokens ---------------------------------------------------------------- */
+:root {
+  --ink:      #0A0908;
+  --surface:  #111010;
+  --bone:     #E8E3D8;
+  --ash:      #A8A499; /* Increased contrast from #8A867C */
+  --dim:      #86827A; /* Increased contrast from #4A4743 */
+  --hairline: #262524; /* Slightly more visible */
+  --ember:    #D4A276; /* Slightly more vibrant */
+  --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* -- Reset ----------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px; /* Increased from 15px */
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+::selection { background: var(--dim); color: var(--bone); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--dim); }
+
+/* -- Grain overlay --------------------------------------------------------- */
+#grain {
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+/* -- Cursor ---------------------------------------------------------------- */
+#cursor {
+  position: fixed;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ember);
+  pointer-events: none;
+  z-index: 998;
+  transform: translate(-50%, -50%);
+  transition: width .35s var(--ease), height .35s var(--ease), opacity .3s;
+  mix-blend-mode: difference;
+}
+body:has(a:hover) #cursor,
+body:has(.project-item:hover) #cursor {
+  width: 42px; height: 42px;
+}
+
+/* -- Nav ------------------------------------------------------------------- */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.6rem 3.5rem;
+  border-bottom: 1px solid transparent;
+  transition: background .5s var(--ease), border-color .5s;
+}
+#nav.scrolled {
+  background: rgba(10,9,8,0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-color: var(--hairline);
+}
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--bone);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ash);
+  text-decoration: none;
+  transition: color .25s;
+}
+.nav-links a:hover { color: var(--bone); }
+
+/* -- HERO ------------------------------------------------------------------ */
+#hero {
+  height: 100vh; min-height: 640px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 3.5rem 4.5rem;
+  position: relative; overflow: hidden;
+}
+#hero-canvas { position: absolute; inset: 0; z-index: 0; }
+#hero > *:not(#hero-canvas) { position: relative; z-index: 1; }
+
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--ash);
+  margin-bottom: 1.6rem;
+  display: flex; align-items: center; gap: 1rem;
+  opacity: 0; transform: translateY(10px);
+}
+.hero-eyebrow::before {
+  content: ''; display: block;
+  width: 32px; height: 1px; background: var(--dim);
+}
+
+.hero-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(68px, 11vw, 164px);
+  font-weight: 300; line-height: .92;
+  letter-spacing: -0.035em; color: var(--bone);
+  overflow: visible;
+}
+.clip-wrap {
+  display: block; overflow: hidden;
+  line-height: 1.0;
+}
+.clip-inner {
+  display: block;
+  transform: translateY(105%);
+  opacity: 0;
+}
+
+.hero-footer {
+  margin-top: 3rem;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 2rem;
+}
+.hero-tagline {
+  font-size: 15px; color: var(--ash); line-height: 1.65;
+  max-width: 300px;
+  opacity: 0; transform: translateY(14px);
+}
+.hero-scroll {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--dim);
+  display: flex; align-items: center; gap: .8rem;
+  opacity: 0;
+  transition: color .3s;
+  text-decoration: none;
+}
+.hero-scroll:hover { color: var(--bone); }
+.hero-scroll-line {
+  width: 0; height: 1px; background: var(--dim);
+  transition: width 1.2s 1.8s var(--ease), background .3s;
+}
+.hero-scroll:hover .hero-scroll-line { background: var(--bone); }
+.hero-scroll.visible .hero-scroll-line { width: 36px; }
+
+/* -- Shared section styles ------------------------------------------------- */
+.mono-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--dim);
+}
+.section-divider {
+  border: none; border-top: 1px solid var(--hairline);
+}
+
+/* -- STATEMENT ------------------------------------------------------------- */
+#statement {
+  padding: 9rem 3.5rem 9rem;
+  border-top: 1px solid var(--hairline);
+}
+.statement-label { margin-bottom: 2.5rem; }
+.statement-body {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(32px, 4.5vw, 68px);
+  font-weight: 300; line-height: 1.18;
+  letter-spacing: -0.02em; color: var(--bone);
+  max-width: 960px;
+}
+/* Each word gets .word-wrap > .word-inner for reveal */
+.word-wrap { display: inline-block; overflow: hidden; vertical-align: bottom; }
+.word-inner { display: inline-block; transform: translateY(110%); opacity: 0; }
+
+/* -- SELECTED WORK --------------------------------------------------------- */
+#work { border-top: 1px solid var(--hairline); }
+
+.work-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 2.5rem 3.5rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.project-list { list-style: none; }
+
+.project-item {
+  border-bottom: 1px solid var(--hairline);
+  position: relative;
+  opacity: 0; transform: translateY(20px);
+  transition: background .28s;
+}
+.project-item:hover { background: var(--surface); }
+
+.project-link {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  outline: none;
+}
+.project-link:focus-visible {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--ember);
+}
+
+.project-inner {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  padding: 2.4rem 3.5rem; /* Reverted to match original clean alignment */
+  transition: transform .4s var(--ease); /* Smooth transition for the whole content block */
+}
+
+.project-item:hover .project-inner {
+  transform: translateX(-2.5rem); /* Shift content left to make room for arrow */
+}
+
+.project-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .14em; color: var(--dim);
+}
+.project-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(26px, 3.2vw, 52px);
+  font-weight: 300; letter-spacing: -0.022em;
+  color: var(--bone); line-height: 1.1;
+  margin-bottom: .35rem;
+  transition: color .3s;
+}
+.project-item:hover .project-title { color: var(--ember); }
+.project-desc {
+  font-size: 14px; color: var(--ash); line-height: 1.55; max-width: 480px;
+}
+.project-tags { display: flex; flex-direction: column; align-items: flex-end; gap: .35rem; }
+.tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--dim);
+  border: 1px solid var(--hairline);
+  padding: 4px 10px; white-space: nowrap;
+  transition: color .3s, border-color .3s;
+}
+.project-item:hover .tag { color: var(--ash); border-color: var(--dim); }
+
+.project-arrow {
+  position: absolute; right: 2.5rem; /* Positioned near the edge but hidden */
+  top: 50%; transform: translateY(-50%) translateX(10px);
+  font-size: 18px; color: var(--ember);
+  opacity: 0; transition: opacity .3s, transform .4s var(--ease);
+}
+.project-item:hover .project-arrow {
+  opacity: 1; transform: translateY(-50%) translateX(0);
+}
+
+/* -- SKILLS / ABOUT -------------------------------------------------------- */
+#about {
+  border-top: 1px solid var(--hairline);
+  padding: 7rem 3.5rem 8rem;
+  overflow: hidden;
+}
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 7rem; align-items: start;
+}
+.about-left {}
+.about-heading {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(38px, 4.8vw, 80px);
+  font-weight: 300; line-height: 1.04;
+  letter-spacing: -0.025em; color: var(--bone);
+  margin-bottom: 2rem;
+}
+.about-heading em { font-style: italic; color: var(--ash); }
+.about-bio {
+  font-size: 15px; color: var(--ash); line-height: 1.75;
+  max-width: 420px; margin-bottom: 3rem;
+}
+.about-meta {
+  display: flex; flex-direction: column; gap: .8rem;
+}
+.about-meta-row {
+  display: flex; gap: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .12em;
+}
+.meta-key { color: var(--dim); text-transform: uppercase; min-width: 100px; }
+.meta-val { color: var(--ash); }
+
+/* Skills list */
+.about-right {}
+.skills-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--dim);
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 0;
+}
+.skill-row {
+  display: flex; align-items: center;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--hairline);
+  opacity: 0; transform: translateX(16px);
+  transition: padding-left .3s var(--ease);
+}
+.skill-row:hover {
+  padding-left: .8rem;
+  border-bottom-color: var(--dim);
+}
+.skill-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--bone);
+  transition: color .3s;
+}
+.skill-row:hover .skill-name {
+  color: var(--ember);
+}
+
+/* -- MARQUEE --------------------------------------------------------------- */
+.marquee-band {
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 1.2rem 0;
+  overflow: hidden;
+  margin: 0 0 5rem;
+}
+.marquee-track {
+  display: flex; white-space: nowrap;
+  animation: march 25s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+.marquee-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--dim);
+  padding: 0 2.2rem;
+  display: flex; align-items: center; gap: 2.2rem;
+}
+.marquee-item::after { content: '*'; color: var(--ember); }
+@keyframes march { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* -- CERTIFICATIONS -------------------------------------------------------- */
+#certs {
+  border-top: 1px solid var(--hairline);
+  padding: 5rem 3.5rem 6rem;
+}
+.certs-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 3.5rem;
+}
+.cert-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--hairline);
+}
+.cert-card {
+  background: var(--ink);
+  padding: 2.8rem 3rem;
+  transition: background .3s;
+  opacity: 0; transform: translateY(16px);
+}
+.cert-card:hover { background: var(--surface); }
+.cert-issuer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ember);
+  margin-bottom: .75rem;
+}
+.cert-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 32px; font-weight: 300;
+  line-height: 1.2; color: var(--bone);
+  margin-bottom: .75rem;
+}
+.cert-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .12em; color: var(--dim);
+}
+
+/* -- CONTACT -------------------------------------------------------------- */
+#contact {
+  border-top: 1px solid var(--hairline);
+  padding: 10rem 3.5rem 8rem;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.contact-bg-text {
+  position: absolute;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(80px, 16vw, 240px);
+  font-weight: 200; color: transparent;
+  -webkit-text-stroke: 1px var(--hairline);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap; pointer-events: none;
+  opacity: .5; letter-spacing: -0.04em;
+  user-select: none;
+}
+.contact-label { margin-bottom: 2.5rem; }
+.contact-heading {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(44px, 7vw, 112px);
+  font-weight: 300; line-height: .96;
+  letter-spacing: -0.03em; color: var(--bone);
+  margin-bottom: 4.5rem;
+  position: relative; z-index: 1;
+}
+.contact-heading em { font-style: italic; color: var(--ash); }
+.contact-links {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 3rem;
+  position: relative; z-index: 1;
+}
+.contact-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ash);
+  text-decoration: none; position: relative;
+  transition: color .3s;
+}
+.contact-link::after {
+  content: ''; position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px; background: var(--bone);
+  transition: width .4s var(--ease);
+}
+.contact-link:hover { color: var(--bone); }
+.contact-link:hover::after { width: 100%; }
+
+/* -- FOOTER ---------------------------------------------------------------- */
+footer {
+  border-top: 1px solid var(--hairline);
+  padding: 2rem 3.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-copy, .footer-right {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .12em; color: var(--dim);
+}
+
+/* -- Reveal utility (for elements not using GSAP) -------------------------- */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* -- Reduced motion -------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .clip-inner, .hero-eyebrow, .hero-tagline, .hero-scroll,
+  .word-inner, .project-item, .skill-row, .cert-card, .reveal {
+    opacity: 1 !important; transform: none !important;
+  }
+  .marquee-track { animation: none; }
+  #cursor { display: none; }
+}
+
+/* -- Mobile ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+  #hero { padding: 0 1.5rem 3rem; }
+  #nav { padding: 1.2rem 1.5rem; }
+  .nav-links { display: none; }
+  #statement { padding: 6rem 1.5rem; }
+  .work-header { padding: 2rem 1.5rem; }
+  .project-inner { grid-template-columns: 48px 1fr; padding: 1.6rem 1.5rem; gap: 1rem; }
+  .project-item:hover .project-inner { transform: translateX(-1.5rem); } /* Less shift on mobile */
+  .project-tags { display: none; }
+  .project-arrow { right: 1rem; }
+  #about { padding: 5rem 1.5rem 6rem; }
+  .about-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+  #certs { padding: 4rem 1.5rem 5rem; }
+  .cert-grid { grid-template-columns: 1fr; }
+  #contact { padding: 7rem 1.5rem 5rem; }
+  footer { padding: 2rem 1.5rem; flex-direction: column; gap: .8rem; text-align: center; }
+  .contact-bg-text { display: none; }
+}
+
+/* -- PROJECT OVERLAY ------------------------------------------------------- */
+#project-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: var(--ink);
+  color: var(--bone);
+  visibility: hidden;
+  transform: translateY(100%);
+  transition: transform .6s var(--ease), visibility .6s;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+#project-overlay.open { transform: translateY(0); visibility: visible; }
+
+#close-overlay {
+  position: absolute; top: 2rem; right: 3.5rem; z-index: 2010;
+  background: none; border: 1px solid var(--hairline);
+  color: var(--ash); padding: .8rem 1.4rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  text-transform: uppercase; cursor: pointer;
+  transition: color .3s, border-color .3s;
+}
+#close-overlay:hover { color: var(--bone); border-color: var(--dim); }
+
+#nav { z-index: 100; transition: opacity .3s, visibility .3s; }
+body.overlay-open #nav { opacity: 0; visibility: hidden; pointer-events: none; }
+body.overlay-open { overflow: hidden; }
+
+#overlay-scroll-container {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 8rem 3.5rem 10rem;
+}
+#overlay-content { max-width: 1100px; margin: 0 auto; }
+
+.overlay-header { margin-bottom: 6rem; }
+.overlay-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ember); text-transform: uppercase; margin-bottom: 1rem; display: block; }
+.overlay-title { font-family: 'Fraunces', serif; font-size: clamp(48px, 6vw, 92px); font-weight: 300; line-height: 1.0; margin-bottom: 2.5rem; }
+.overlay-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; border-top: 1px solid var(--hairline); padding-top: 2.5rem; }
+.meta-item { display: flex; flex-direction: column; gap: .5rem; }
+.meta-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); text-transform: uppercase; }
+.meta-value { font-size: 14px; color: var(--ash); }
+.meta-val-status { color: var(--ember); }
+
+.overlay-section { margin-bottom: 9rem; }
+.section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); text-transform: uppercase; margin-bottom: 3rem; display: block; }
+.section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; }
+.section-text { font-size: 16px; line-height: 1.8; color: var(--ash); }
+.section-text h4 { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 300; color: var(--bone); margin-bottom: 1.5rem; }
+.section-visual { background: var(--surface); border: 1px solid var(--hairline); aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.visual-placeholder { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); text-transform: uppercase; }
+
+@media (max-width: 768px) {
+  #close-overlay { top: 1.2rem; right: 1.5rem; }
+  #overlay-scroll-container { padding: 6rem 1.5rem 6rem; }
+  .section-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Grain -->
+<svg id="grain" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+  <filter id="fn"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#fn)"/>
+</svg>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+
+<!-- -- NAV ----------------------------------------------------------------- -->
+<nav id="nav" aria-label="Main navigation">
+  <a href="#" class="nav-logo" aria-label="Natthapath Damrongsri">N * D</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#certs">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- -- HERO ---------------------------------------------------------------- -->
+<section id="hero" aria-label="Introduction">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+
+  <div class="hero-eyebrow" id="hero-eyebrow">
+    Natthapath Damrongsri &nbsp;*&nbsp; UX/UI Designer
+  </div>
+
+  <h1 class="hero-name">
+    <span class="clip-wrap"><span class="clip-inner" id="hero-line-1">Complexity,</span></span>
+    <span class="clip-wrap"><span class="clip-inner" id="hero-line-2">made clear.</span></span>
+  </h1>
+
+  <div class="hero-footer">
+    <p class="hero-tagline" id="hero-tagline">
+      Building efficient interfaces<br>
+      for enterprise systems<br>
+      and product teams.
+    </p>
+    <a href="#work" class="hero-scroll" id="hero-scroll">
+      <span class="hero-scroll-line"></span>
+      Explore Interface - Move to Organize
+    </a>
+  </div>
+</section>
+
+<!-- -- PROJECT OVERLAY ------------------------------------------------------ -->
+<div id="project-overlay" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+  <button id="close-overlay" type="button" aria-label="Close project details">X Close</button>
+  <div id="overlay-scroll-container">
+    <div id="overlay-content">
+      <!-- Content populated via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- -- STATEMENT ----------------------------------------------------------- -->
+<section id="statement" aria-label="Statement">
+  <div class="mono-label statement-label reveal">- About</div>
+  <p class="statement-body" id="statement-body">
+    A designer who speaks the language of both users and business - translating research into interfaces that are not just beautiful, but genuinely work.
+  </p>
+</section>
+
+<!-- -- SELECTED WORK -------------------------------------------------------- -->
+<section id="work" aria-label="Selected Work">
+  <div class="work-header">
+    <span class="mono-label">Selected Work</span>
+    <span class="mono-label">06 Projects</span>
+  </div>
+
+  <ul class="project-list">
+
+    <li class="project-item">
+      <a href="#" class="project-link" aria-label="Naaraan - E-commerce platform">
+        <div class="project-inner">
+          <span class="project-num">01</span>
+          <div class="project-body">
+            <h3 class="project-title">Naaraan</h3>
+            <p class="project-desc">E-commerce platform empowering Thai SMEs to create online stores - responsive, scalable, no coding required.</p>
+          </div>
+          <div class="project-tags">
+            <span class="tag">UX / UI Design</span>
+            <span class="tag">Design System</span>
+            <span class="tag">E-commerce</span>
+          </div>
+        </div>
+        <span class="project-arrow" aria-hidden="true">-></span>
+      </a>
+    </li>
+
+    <li class="project-item">
+      <a href="#" class="project-link" aria-label="Customer Data Platform">
+        <div class="project-inner">
+          <span class="project-num">02</span>
+          <div class="project-body">
+            <h3 class="project-title">Customer Data Platform</h3>
+            <p class="project-desc">Revitalized Connex Business Online's CDP - unified customer profiles, simplified data workflows for marketing teams.</p>
+          </div>
+          <div class="project-tags">
+            <span class="tag">Enterprise UX</span>
+            <span class="tag">Dashboard</span>
+            <span class="tag">Research</span>
+          </div>
+        </div>
+        <span class="project-arrow" aria-hidden="true">-></span>
+      </a>
+    </li>
+
+    <li class="project-item">
+      <a href="#" class="project-link" aria-label="Counter Service - 7-Eleven POS">
+        <div class="project-inner">
+          <span class="project-num">03</span>
+          <div class="project-body">
+            <h3 class="project-title">Counter Service</h3>
+            <p class="project-desc">Modernized 7-Eleven's POS system - dual-screen layouts, brand-aligned design system, faster checkout flow.</p>
+          </div>
+          <div class="project-tags">
+            <span class="tag">POS Design</span>
+            <span class="tag">UI Design</span>
+            <span class="tag">Brand</span>
+          </div>
+        </div>
+        <span class="project-arrow" aria-hidden="true">-></span>
+      </a>
+    </li>
+
+    <li class="project-item">
+      <a href="#" class="project-link" aria-label="Time Attendance">
+        <div class="project-inner">
+          <span class="project-num">04</span>
+          <div class="project-body">
+            <h3 class="project-title">Time Attendance</h3>
+            <p class="project-desc">Redesigned a time-tracking platform for employees and managers - reducing errors, improving payroll accuracy.</p>
+          </div>
+          <div class="project-tags">
+            <span class="tag">Wireframing</span>
+            <span class="tag">Prototyping</span>
+            <span class="tag">Research</span>
+          </div>
+        </div>
+        <span class="project-arrow" aria-hidden="true">-></span>
+      </a>
+    </li>
+
+    <li class="project-item">
+      <a href="#" class="project-link" aria-label="Showtime Swipe - Personal project">
+        <div class="project-inner">
+          <span class="project-num">05</span>
+          <div class="project-body">
+            <h3 class="project-title">Showtime Swipe</h3>
+            <p class="project-desc">Personal project - aggregating cinema showtimes from multiple distributors into one clean, searchable platform.</p>
+          </div>
+          <div class="project-tags">
+            <span class="tag">Personal</span>
+            <span class="tag">Mobile UX</span>
+            <span class="tag">Research</span>
+          </div>
+        </div>
+        <span class="project-arrow" aria-hidden="true">-></span>
+      </a>
+    </li>
+
+    <li class="project-item">
+      <a href="#" class="project-link" aria-label="Groceries Delivered - UX Research">
+        <div class="project-inner">
+          <span class="project-num">06</span>
+          <div class="project-body">
+            <h3 class="project-title">Groceries Delivered</h3>
+            <p class="project-desc">UX research study on Thai online grocery apps - 10 user interviews, pain-point mapping, and actionable insights.</p>
+          </div>
+          <div class="project-tags">
+            <span class="tag">UX Research</span>
+            <span class="tag">Interviews</span>
+            <span class="tag">Insights</span>
+          </div>
+        </div>
+        <span class="project-arrow" aria-hidden="true">-></span>
+      </a>
+    </li>
+
+  </ul>
+</section>
+
+<!-- -- ABOUT + SKILLS ------------------------------------------------------- -->
+<section id="about" aria-label="About and Skills">
+
+  <!-- Marquee -->
+  <div class="marquee-band" aria-hidden="true">
+    <div class="marquee-track" id="marquee-track">
+      <span class="marquee-item">UX Design</span>
+      <span class="marquee-item">UI Design</span>
+      <span class="marquee-item">UX Research</span>
+      <span class="marquee-item">Wireframing</span>
+      <span class="marquee-item">Prototyping</span>
+      <span class="marquee-item">Design Systems</span>
+      <span class="marquee-item">Responsive Design</span>
+      <span class="marquee-item">Website Design</span>
+      <span class="marquee-item">Usability Testing</span>
+      <span class="marquee-item">Info Architecture</span>
+      <span class="marquee-item">UX Design</span>
+      <span class="marquee-item">UI Design</span>
+      <span class="marquee-item">UX Research</span>
+      <span class="marquee-item">Wireframing</span>
+      <span class="marquee-item">Prototyping</span>
+      <span class="marquee-item">Design Systems</span>
+      <span class="marquee-item">Responsive Design</span>
+      <span class="marquee-item">Website Design</span>
+      <span class="marquee-item">Usability Testing</span>
+      <span class="marquee-item">Info Architecture</span>
+    </div>
+  </div>
+
+  <div class="about-grid">
+
+    <div class="about-left">
+      <h2 class="about-heading reveal">
+        Design<br>
+        <em>with intent.</em>
+      </h2>
+      <p class="about-bio reveal">
+        Based in Bangkok. I work across product teams, startups, and enterprise - bringing structure to ambiguity and clarity to complex systems. My process starts with understanding people, not pixels.
+      </p>
+      <div class="about-meta reveal">
+        <div class="about-meta-row">
+          <span class="meta-key">Location</span>
+          <span class="meta-val">Bangkok, Thailand</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="meta-key">Role</span>
+          <span class="meta-val">UX/UI Designer</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="meta-key">Focus</span>
+          <span class="meta-val">Product * Enterprise * Research</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="meta-key">Available</span>
+          <span class="meta-val meta-val-status">Open to opportunities</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right">
+      <div class="skills-title">Core Skills</div>
+
+      <div class="skill-row">
+        <span class="skill-name">UX / UI Design</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">UX Research</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Design Systems</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Prototyping</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Wireframing</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Website Design</span>
+      </div>
+      <div class="skill-row">
+        <span class="skill-name">Responsive Design</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- -- CERTIFICATIONS ------------------------------------------------------- -->
+<section id="certs" aria-label="Certifications">
+  <div class="certs-header">
+    <span class="mono-label">Certifications</span>
+    <span class="mono-label">02</span>
+  </div>
+  <div class="cert-grid">
+    <div class="cert-card">
+      <div class="cert-issuer">Google</div>
+      <div class="cert-name">UX Design<br>Professional Certificate</div>
+      <div class="cert-date">Nov 2023</div>
+    </div>
+    <div class="cert-card">
+      <div class="cert-issuer">Microsoft</div>
+      <div class="cert-name">Front-End Developer<br>Professional Certificate</div>
+      <div class="cert-date">Apr 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- -- CONTACT -------------------------------------------------------------- -->
+<section id="contact" aria-label="Contact">
+  <div class="contact-bg-text" aria-hidden="true">Hello.</div>
+  <div class="mono-label contact-label reveal">- Let's work together</div>
+  <h2 class="contact-heading reveal">
+    Got a project<br>
+    <em>in mind?</em>
+  </h2>
+  <div class="contact-links reveal">
+    <a href="mailto:natthapath.d@gmail.com" class="contact-link">natthapath.d@gmail.com</a>
+    <a href="tel:+66863693197" class="contact-link">+66&nbsp;86&nbsp;369&nbsp;3197</a>
+    <a href="https://linkedin.com/in/natthapath-d" target="_blank" rel="noopener noreferrer" class="contact-link">LinkedIn -></a>
+  </div>
+</section>
+
+<!-- -- FOOTER --------------------------------------------------------------- -->
+<footer>
+  <span class="footer-copy">Natthapath Damrongsri - UX/UI Designer</span>
+  <span class="footer-right">Bangkok * 2025</span>
+</footer>
+
+<!-- -- GSAP ----------------------------------------------------------------- -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+'use strict';
+gsap.registerPlugin(ScrollTrigger);
+
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* -- PROJECT OVERLAY LOGIC ------------------------------------------------ */
+(function() {
+  const overlay = document.getElementById('project-overlay');
+  const closeBtn = document.getElementById('close-overlay');
+  const content = document.getElementById('overlay-content');
+  const projectLinks = document.querySelectorAll('.project-link');
+
+  if (!overlay || !content) return;
+
+  const projectOrder = [
+    'Naaraan',
+    'Customer Data Platform',
+    'Counter Service',
+    'Time Attendance',
+    'Showtime Swipe',
+    'Groceries Delivered'
+  ];
+
+  const projectData = {
+    'Naaraan': {
+      eyebrow: 'E-commerce * SaaS',
+      title: 'Naaraan - Empowering Thai SMEs.',
+      meta: [
+        { label: 'Role', value: 'Lead Product Designer' },
+        { label: 'Timeline', value: '8 Months (2024)' },
+        { label: 'Impact', value: '40% Reduction in onboarding time' },
+        { label: 'Platform', value: 'Web, Mobile Dashboard' }
+      ],
+      sections: [
+        {
+          label: '01 Challenge',
+          title: 'Managing stock shouldn\'t feel like a chore.',
+          text: 'Thai SMEs often struggle with complex inventory systems that require deep technical knowledge. Naaraan needed to bridge the gap between powerful ERP features and a simplified, mobile-first experience for non-tech users.',
+          visual: 'Complexity: Messy Inventory Flow'
+        },
+        {
+          label: '02 Strategy',
+          title: 'The Blueprint for Clarity.',
+          text: 'I refactored the design system into modular components that prioritized speed. By implementing a "Task-First" architecture, we ensured that the most frequent merchant actions-adding products and checking orders-were never more than two taps away.',
+          visual: 'Clarity: System Architecture'
+        }
+      ]
+    },
+    'Customer Data Platform': {
+      eyebrow: 'Enterprise SaaS * Analytics',
+      title: 'Customer Data Platform - Unified clarity.',
+      meta: [
+        { label: 'Role', value: 'Product Designer' },
+        { label: 'Timeline', value: '5 Months (2024)' },
+        { label: 'Impact', value: '60% Faster segment creation' },
+        { label: 'Platform', value: 'Web Dashboard' }
+      ],
+      sections: [
+        {
+          label: '01 Challenge',
+          title: 'Data everywhere, insight nowhere.',
+          text: 'Marketing teams at Connex Business Online were drowning in siloed customer data spread across disconnected tools. Creating a single audience segment required hours of manual exports and spreadsheet manipulation - a workflow that was both error-prone and demoralising.',
+          visual: 'Before: Fragmented Data Sources'
+        },
+        {
+          label: '02 Strategy',
+          title: 'One profile. Every touchpoint.',
+          text: 'I redesigned the CDP around a unified customer timeline view, surfacing all behavioural and transactional signals in one place. A drag-and-drop segment builder replaced complex query forms, letting marketers build precise audiences in minutes without engineering support.',
+          visual: 'After: Unified Customer Profile'
+        }
+      ]
+    },
+    'Counter Service': {
+      eyebrow: 'Retail * POS',
+      title: 'Counter Service - Checkout, reimagined.',
+      meta: [
+        { label: 'Role', value: 'UI Designer' },
+        { label: 'Timeline', value: '4 Months (2023)' },
+        { label: 'Impact', value: '30% Faster checkout flow' },
+        { label: 'Platform', value: 'Dual-Screen POS Terminal' }
+      ],
+      sections: [
+        {
+          label: '01 Challenge',
+          title: 'Legacy UI slowing every transaction.',
+          text: '7-Eleven\'s point-of-sale interface had aged significantly - cluttered layouts, inconsistent iconography, and no clear visual hierarchy made training new staff slow and peak-hour errors frequent. The system needed a full visual overhaul without disrupting familiar workflows.',
+          visual: 'Before: Legacy POS Interface'
+        },
+        {
+          label: '02 Strategy',
+          title: 'Dual screens, single purpose.',
+          text: 'I developed a brand-aligned design system built on 7-Eleven\'s visual identity and designed a dual-screen layout that separated cashier controls from the customer-facing display. High-contrast typography and prominent touch targets reduced scanning errors and cut average transaction time by 30%.',
+          visual: 'After: Modernised Dual-Screen Layout'
+        }
+      ]
+    },
+    'Time Attendance': {
+      eyebrow: 'HR Tech * SaaS',
+      title: 'Time Attendance - Precision at work.',
+      meta: [
+        { label: 'Role', value: 'Product Designer' },
+        { label: 'Timeline', value: '3 Months (2023)' },
+        { label: 'Impact', value: '45% Reduction in payroll errors' },
+        { label: 'Platform', value: 'Web & Mobile' }
+      ],
+      sections: [
+        {
+          label: '01 Challenge',
+          title: 'Manual tracking breeds costly mistakes.',
+          text: 'The existing time-tracking system relied on paper logs and fragmented spreadsheets, leading to frequent payroll discrepancies that damaged trust between employees and HR. Managers had no real-time visibility, and dispute resolution was a manual, time-consuming process.',
+          visual: 'Before: Manual Log Chaos'
+        },
+        {
+          label: '02 Strategy',
+          title: 'Clarity for every shift, every person.',
+          text: 'I designed a role-based interface that gave employees a simple clock-in/out experience while providing managers with real-time dashboards, anomaly flags, and one-click approval flows. Integrating leave balances and overtime calculations into a single view cut payroll errors by 45%.',
+          visual: 'After: Real-Time Attendance Dashboard'
+        }
+      ]
+    },
+    'Showtime Swipe': {
+      eyebrow: 'Personal Project * Mobile',
+      title: 'Showtime Swipe - Every screening, one place.',
+      meta: [
+        { label: 'Role', value: 'Solo Designer' },
+        { label: 'Timeline', value: '6 Weeks (2024)' },
+        { label: 'Impact', value: 'Personal passion project' },
+        { label: 'Platform', value: 'iOS & Android' }
+      ],
+      sections: [
+        {
+          label: '01 Challenge',
+          title: 'Why does finding a movie take so long?',
+          text: 'Checking showtimes in Thailand meant jumping between multiple cinema-chain apps, each with different UX patterns and no cross-comparison. As a frequent cinema-goer, I found myself wasting time on logistics rather than actually enjoying the experience.',
+          visual: 'Before: Fragmented Cinema Apps'
+        },
+        {
+          label: '02 Strategy',
+          title: 'Aggregate, simplify, swipe.',
+          text: 'I designed a mobile-first aggregator that pulls showtimes from all major Thai distributors into a single, searchable feed. A swipe-based discovery flow lets users browse by mood, genre, or proximity - reducing the time from "what should I watch?" to a booked ticket to under 60 seconds.',
+          visual: 'After: Unified Showtime Feed'
+        }
+      ]
+    },
+    'Groceries Delivered': {
+      eyebrow: 'UX Research * Consumer',
+      title: 'Groceries Delivered - Research-first thinking.',
+      meta: [
+        { label: 'Role', value: 'UX Researcher' },
+        { label: 'Timeline', value: '2 Months (2023)' },
+        { label: 'Impact', value: '10 Interviews synthesised' },
+        { label: 'Platform', value: 'Research Study' }
+      ],
+      sections: [
+        {
+          label: '01 Research',
+          title: 'Why do Thai shoppers abandon online grocery carts?',
+          text: 'Thai online grocery apps showed high abandonment rates despite strong initial adoption. I conducted 10 in-depth user interviews across age groups and shopping frequencies to map the real friction points - ranging from trust issues with fresh produce to confusing substitution policies and opaque delivery windows.',
+          visual: 'Affinity Map: Pain Point Clusters'
+        },
+        {
+          label: '02 Insights',
+          title: 'Trust, control, and the fear of a bad tomato.',
+          text: 'The core insight: users didn\'t distrust the apps - they distrusted the invisible picking process. Recommendations included real-time picker communication, photo confirmation for produce, granular substitution preferences, and honest delivery time windows. Each insight was mapped to a specific design intervention backed by interview evidence.',
+          visual: 'Insight Framework: Trust Ladder'
+        }
+      ]
+    }
+  };
+
+  function openOverlay(projectName) {
+    const data = projectData[projectName];
+    if (!data) return;
+    const currentIndex = projectOrder.indexOf(projectName);
+    const nextName = projectOrder[(currentIndex + 1) % projectOrder.length];
+    content.innerHTML = `
+      <header class="overlay-header">
+        <span class="overlay-eyebrow">${data.eyebrow}</span>
+        <h2 class="overlay-title" id="overlay-title">${data.title}</h2>
+        <div class="overlay-meta-grid">
+          ${data.meta.map(m => `
+            <div class="meta-item">
+              <span class="meta-label">${m.label}</span>
+              <span class="meta-value">${m.value}</span>
+            </div>
+          `).join('')}
+        </div>
+      </header>
+      ${data.sections.map(s => `
+        <section class="overlay-section">
+          <span class="section-label">${s.label}</span>
+          <div class="section-grid">
+            <div class="section-text">
+              <h4>${s.title}</h4>
+              <p>${s.text}</p>
+            </div>
+            <div class="section-visual">
+              <span class="visual-placeholder">${s.visual}</span>
+            </div>
+          </div>
+        </section>
+      `).join('')}
+      <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--hairline); cursor: pointer;" onclick="document.querySelector('[data-project=\\'${nextName}\\']').click()">
+        <span class="meta-label">Next Project</span>
+        <h3 style="font-family: Fraunces, serif; font-size: 32px; font-weight:300; margin-top: 1rem">${nextName}</h3>
+      </footer>
+    `;
+    overlay.classList.add('open');
+    document.body.classList.add('overlay-open');
+    document.getElementById('overlay-scroll-container').scrollTop = 0;
+  }
+
+  function closeOverlay() {
+    overlay.classList.remove('open');
+    document.body.classList.remove('overlay-open');
+  }
+
+  projectLinks.forEach(link => {
+    const titleEl = link.querySelector('.project-title');
+    if (titleEl) link.dataset.project = titleEl.textContent.trim();
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (titleEl) openOverlay(titleEl.textContent.trim());
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+  window.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeOverlay(); });
+})();
+
+
+/* --- CANVAS HERO BACKGROUND (Systematic Blueprint) ----------------------- */
+(function () {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, elements = [];
+  let mouse = { x: -1000, y: -1000 };
+  const spacing = 60;
+  
+  class UIAtom {
+    constructor(x, y, type) {
+      this.baseX = x;
+      this.baseY = y;
+      this.x = x + (Math.random() - 0.5) * 40;
+      this.y = y + (Math.random() - 0.5) * 40;
+      this.type = type; // 0: rect, 1: line, 2: circle, 3: toggle
+      this.size = 12 + Math.random() * 24;
+      this.rot = Math.random() * Math.PI;
+      this.active = 0;
+    }
+    
+    draw() {
+      const dx = mouse.x - this.baseX;
+      const dy = mouse.y - this.baseY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const maxDist = 250;
+      
+      if (dist < maxDist) {
+        const force = (maxDist - dist) / maxDist;
+        this.active = force;
+        // "Snap" towards base position as it becomes active
+        this.x += (this.baseX - this.x) * 0.15;
+        this.y += (this.baseY - this.y) * 0.15;
+      } else {
+        this.active *= 0.9;
+        // Drift away slightly when inactive
+        this.x += (Math.sin(Date.now() * 0.001 + this.baseX) * 0.2);
+        this.y += (Math.cos(Date.now() * 0.001 + this.baseY) * 0.2);
+      }
+      
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      if (this.active < 0.5) ctx.rotate(this.rot + (this.active * 2));
+      
+      const alpha = 0.04 + (this.active * 0.4);
+      ctx.strokeStyle = `rgba(232,227,216, ${alpha})`;
+      ctx.fillStyle = `rgba(196,149,106, ${this.active * 0.15})`;
+      ctx.lineWidth = 1;
+
+      switch(this.type) {
+        case 0: // Card fragment
+          ctx.strokeRect(-this.size/2, -this.size/3, this.size, this.size/1.5);
+          if (this.active > 0.6) ctx.fillRect(-this.size/2, -this.size/3, this.size/3, this.size/1.5);
+          break;
+        case 1: // UI Line/Bar
+          ctx.beginPath();
+          ctx.moveTo(-this.size/2, 0); ctx.lineTo(this.size/2, 0);
+          ctx.stroke();
+          break;
+        case 2: // Action circle
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size/4, 0, Math.PI*2);
+          ctx.stroke();
+          if (this.active > 0.5) ctx.fill();
+          break;
+        case 3: // Toggle shell
+          ctx.strokeRect(-10, -5, 20, 10);
+          if (this.active > 0.7) ctx.fillRect(2, -3, 6, 6);
+          break;
+      }
+      ctx.restore();
+    }
+  }
+
+  function init() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    elements = [];
+    for (let x = spacing; x < w; x += spacing) {
+      for (let y = spacing; y < h; y += spacing) {
+        elements.push(new UIAtom(x, y, Math.floor(Math.random() * 4)));
+      }
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = '#0A0908';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Technical Grid Underlay
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(232,227,216,0.02)';
+    for(let i=0; i<w; i+=spacing) { ctx.moveTo(i,0); ctx.lineTo(i,h); }
+    for(let i=0; i<h; i+=spacing) { ctx.moveTo(0,i); ctx.lineTo(w,i); }
+    ctx.stroke();
+
+    elements.forEach(el => el.draw());
+
+    // Vignette
+    let vg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h)*0.9);
+    vg.addColorStop(0, 'transparent');
+    vg.addColorStop(1, 'rgba(10,9,8,0.9)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0,0,w,h);
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('resize', init);
+  
+  if (!reduced) { init(); draw(); }
+})();
+
+
+/* -----------------------------------------------------------------------------
+   CUSTOM CURSOR
+----------------------------------------------------------------------------- */
+(function () {
+  if (reduced) return;
+  const el = document.getElementById('cursor');
+  let mx=-100, my=-100, cx=-100, cy=-100;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  document.addEventListener('mouseleave', () => { el.style.opacity='0'; });
+  document.addEventListener('mouseenter', () => { el.style.opacity='1'; });
+  (function loop() {
+    cx += (mx-cx)*.1; cy += (my-cy)*.1;
+    el.style.left = cx+'px'; el.style.top = cy+'px';
+    requestAnimationFrame(loop);
+  })();
+})();
+
+
+/* -----------------------------------------------------------------------------
+   NAV SCROLL
+----------------------------------------------------------------------------- */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+
+/* -----------------------------------------------------------------------------
+   HERO ENTRANCE
+----------------------------------------------------------------------------- */
+(function () {
+  if (reduced) return;
+  const ease = 'power4.out';
+
+  const tl = gsap.timeline();
+
+  tl.to('#hero-eyebrow', { opacity:1, y:0, duration:.8, ease, delay:.4 })
+    .to('#hero-line-1',  { y:'0%', opacity:1, duration:1.1, ease:'cubic-bezier(0.22,1,0.36,1)' }, '-=.35')
+    .to('#hero-line-2',  { y:'0%', opacity:1, duration:1.1, ease:'cubic-bezier(0.22,1,0.36,1)' }, '-=.85')
+    .to('#hero-tagline', { opacity:1, y:0, duration:.9, ease }, '-=.5')
+    .to('#hero-scroll',  { opacity:1, duration:.7, ease }, '-=.4')
+    .add(() => { document.getElementById('hero-scroll').classList.add('visible'); }, '+=.05');
+})();
+
+
+/* -----------------------------------------------------------------------------
+   STATEMENT - word-by-word reveal
+----------------------------------------------------------------------------- */
+(function () {
+  const el = document.getElementById('statement-body');
+  const text = el.textContent.trim();
+  const words = text.split(/\s+/);
+  el.innerHTML = words.map(w =>
+    `<span class="word-wrap"><span class="word-inner">${w}</span></span>`
+  ).join(' ');
+
+  if (reduced) {
+    el.querySelectorAll('.word-inner').forEach(w => { w.style.opacity=1; w.style.transform='none'; });
+    return;
+  }
+
+  ScrollTrigger.create({
+    trigger: '#statement',
+    start: 'top 72%',
+    once: true,
+    onEnter: () => {
+      gsap.to('#statement .word-inner', {
+        y: '0%', opacity: 1, duration: .95,
+        ease: 'cubic-bezier(0.22,1,0.36,1)',
+        stagger: .048
+      });
+      gsap.to('#statement .statement-label', { opacity:1, y:0, duration:.7 });
+    }
+  });
+})();
+
+
+/* -----------------------------------------------------------------------------
+   PROJECT ITEMS - staggered reveal
+----------------------------------------------------------------------------- */
+(function () {
+  if (reduced) {
+    document.querySelectorAll('.project-item').forEach(el => {
+      el.style.opacity = 1; el.style.transform = 'none';
+    });
+    return;
+  }
+
+  gsap.utils.toArray('.project-item').forEach((item, i) => {
+    ScrollTrigger.create({
+      trigger: item,
+      start: 'top 90%',
+      once: true,
+      onEnter: () => {
+        gsap.to(item, {
+          opacity: 1, y: 0, duration: .75,
+          ease: 'cubic-bezier(0.22,1,0.36,1)',
+          delay: Math.min(i, 3) * 0.07
+        });
+      }
+    });
+  });
+})();
+
+
+/* -----------------------------------------------------------------------------
+   SKILL BARS
+----------------------------------------------------------------------------- */
+(function () {
+  const rows = document.querySelectorAll('.skill-row');
+
+  if (reduced) {
+    rows.forEach(row => {
+      row.style.opacity = 1; row.style.transform = 'none';
+    });
+    return;
+  }
+
+  rows.forEach((row, i) => {
+    ScrollTrigger.create({
+      trigger: row,
+      start: 'top 92%',
+      once: true,
+      onEnter: () => {
+        gsap.to(row, {
+          opacity: 1, x: 0, duration: .8,
+          ease: 'cubic-bezier(0.22,1,0.36,1)',
+          delay: i * 0.08
+        });
+      }
+    });
+  });
+})();
+
+
+/* -----------------------------------------------------------------------------
+   CERT CARDS
+----------------------------------------------------------------------------- */
+(function () {
+  const cards = document.querySelectorAll('.cert-card');
+
+  if (reduced) {
+    cards.forEach(c => { c.style.opacity=1; c.style.transform='none'; });
+    return;
+  }
+
+  cards.forEach((card, i) => {
+    ScrollTrigger.create({
+      trigger: card,
+      start: 'top 88%',
+      once: true,
+      onEnter: () => {
+        gsap.to(card, {
+          opacity: 1, y: 0, duration: .8,
+          ease: 'cubic-bezier(0.22,1,0.36,1)',
+          delay: i * 0.14
+        });
+      }
+    });
+  });
+})();
+
+
+/* -----------------------------------------------------------------------------
+   GENERIC .reveal ELEMENTS (IntersectionObserver)
+----------------------------------------------------------------------------- */
+(function () {
+  const els = document.querySelectorAll('.reveal');
+  if (reduced) {
+    els.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  els.forEach(el => obs.observe(el));
+})();
+
+
+/* -----------------------------------------------------------------------------
+   CONTACT SECTION ENTRANCE
+----------------------------------------------------------------------------- */
+(function () {
+  if (reduced) return;
+
+  ScrollTrigger.create({
+    trigger: '#contact',
+    start: 'top 75%',
+    once: true,
+    onEnter: () => {
+      gsap.from('.contact-bg-text', {
+        opacity: 0, scale: .92, duration: 1.4,
+        ease: 'cubic-bezier(0.22,1,0.36,1)'
+      });
+    }
+  });
+})();
+
+
+/* -- SMOOTH SCROLL FOR NAV LINKS ------------------------------------------- */
+document.querySelectorAll('a[href^="#"]:not(.project-link)').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+
+/* -----------------------------------------------------------------------------
+   PARALLAX - hero name slow upward drift on scroll
+----------------------------------------------------------------------------- */
+(function () {
+  if (reduced) return;
+  gsap.to('.hero-name', {
+    yPercent: -18,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
