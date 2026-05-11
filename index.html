@@ -822,26 +822,6 @@ body.overlay-open { overflow: hidden; }
   </div>
 </section>
 
-<!-- -- CERTIFICATIONS ------------------------------------------------------- -->
-<section id="certs" aria-label="Certifications">
-  <div class="certs-header">
-    <span class="mono-label">Certifications</span>
-    <span class="mono-label">02</span>
-  </div>
-  <div class="cert-grid">
-    <div class="cert-card">
-      <div class="cert-issuer">Google</div>
-      <div class="cert-name">UX Design<br>Professional Certificate</div>
-      <div class="cert-date">Nov 2023</div>
-    </div>
-    <div class="cert-card">
-      <div class="cert-issuer">Microsoft</div>
-      <div class="cert-name">Front-End Developer<br>Professional Certificate</div>
-      <div class="cert-date">Apr 2025</div>
-    </div>
-  </div>
-</section>
-
 <!-- -- CONTACT -------------------------------------------------------------- -->
 <section id="contact" aria-label="Contact">
   <div class="contact-bg-text" aria-hidden="true">Hello.</div>
@@ -860,7 +840,7 @@ body.overlay-open { overflow: hidden; }
 <!-- -- FOOTER --------------------------------------------------------------- -->
 <footer>
   <span class="footer-copy">Natthapath Damrongsri - UX/UI Designer</span>
-  <span class="footer-right">Bangkok * 2025</span>
+  <span class="footer-right">Bangkok * <span id="current-year">2026</span></span>
 </footer>
 
 <!-- -- GSAP ----------------------------------------------------------------- -->
@@ -869,6 +849,11 @@ body.overlay-open { overflow: hidden; }
 
 <script>
 'use strict';
+// Set current year
+document.addEventListener('DOMContentLoaded', () => {
+  const yearEl = document.getElementById('current-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+});
 gsap.registerPlugin(ScrollTrigger);
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
