@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Experiments — C05 & C08</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+/* -- Tokens (identical to main portfolio) ---------------------------------- */
+:root {
+  --ink:      #0A0908;
+  --surface:  #111010;
+  --bone:     #E8E3D8;
+  --ash:      #A8A499;
+  --dim:      #86827A;
+  --hairline: #262524;
+  --ember:    #D4A276;
+  --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+  --gutter:   3.5rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+::selection { background: var(--dim); color: var(--bone); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--dim); }
+
+/* Grain overlay */
+#grain {
+  position: fixed; inset: 0; z-index: 999;
+  pointer-events: none; opacity: 0.04;
+  mix-blend-mode: overlay;
+}
+
+/* -- Experiment nav -------------------------------------------------------- */
+.exp-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem var(--gutter);
+  background: rgba(10,9,8,0.92);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hairline);
+  gap: 1rem;
+}
+.exp-nav-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--dim);
+  white-space: nowrap;
+}
+.exp-nav-links { display: flex; gap: 1.8rem; list-style: none; flex-wrap: wrap; }
+.exp-nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ash);
+  text-decoration: none; transition: color .2s;
+}
+.exp-nav-links a:hover { color: var(--bone); }
+.exp-nav-links .back { color: var(--dim); }
+.exp-nav-links .back:hover { color: var(--ash); }
+
+@media (max-width: 640px) {
+  :root { --gutter: 1.5rem; }
+  .exp-nav-tag { display: none; }
+  .exp-nav-links { gap: 1rem; }
+}
+
+/* -- Shared section shell -------------------------------------------------- */
+.proto-wrap {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 7rem var(--gutter) 5.5rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.proto-concept-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+  margin-bottom: 4rem;
+}
+
+/* -- Info block (risks / recommendation) ----------------------------------- */
+.info-block {
+  padding: 4rem var(--gutter) 5rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.info-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+  margin-bottom: 1.5rem;
+}
+.info-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(24px, 3vw, 36px); font-weight: 300; color: var(--bone);
+  margin-bottom: 2rem;
+}
+.info-list { list-style: none; display: flex; flex-direction: column; gap: .85rem; max-width: 740px; }
+.info-list li {
+  font-size: 14px; color: var(--ash); line-height: 1.7;
+  padding-left: 1.5rem; position: relative;
+}
+.info-list li::before { content: '→'; position: absolute; left: 0; color: var(--ember); font-size: 12px; top: 4px; }
+
+
+/* ==========================================================================
+   CONCEPT 05 — EMPTY STATE
+   ========================================================================== */
+
+.p05-frame {
+  position: relative;
+  border: 1px solid var(--hairline);
+  padding: 3.5rem;
+  max-width: 820px;
+}
+
+.p05-frame-label {
+  position: absolute; top: -0.65em; left: 2rem;
+  background: var(--ink); padding: 0 .5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+  opacity: 0;
+}
+.p05-frame-status {
+  position: absolute; top: -0.65em; right: 2rem;
+  background: var(--ink); padding: 0 .5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .12em; color: var(--dim);
+  display: flex; align-items: center; gap: .45rem;
+  opacity: 0;
+}
+.p05-frame-status::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--ember); flex-shrink: 0;
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+@keyframes dot-pulse { 0%,100% { opacity:1; } 50% { opacity: .3; } }
+
+.p05-cursor-area {
+  height: 2.8rem; display: flex; align-items: center; margin-bottom: 2rem;
+}
+.p05-cursor {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.8rem; line-height: 1; color: var(--ember);
+  opacity: 0;
+}
+.p05-cursor.is-blinking { animation: cursor-blink .75s step-end infinite; }
+@keyframes cursor-blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+.p05-identity { opacity: 0; transform: translateY(8px); margin-bottom: 2.2rem; }
+.p05-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ash);
+}
+.p05-role {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .12em; color: var(--dim); margin-top: .3rem;
+}
+
+.p05-divider {
+  border: none; border-top: 1px solid var(--hairline);
+  margin-bottom: 2.5rem;
+  opacity: 0; transform-origin: left;
+}
+
+.p05-headline {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(44px, 9vw, 120px);
+  font-weight: 300; line-height: .92;
+  letter-spacing: -0.035em; color: var(--bone);
+  opacity: 0; transform: translateY(18px);
+  margin-bottom: 2.5rem;
+}
+
+.p05-tagline {
+  font-size: 14px; color: var(--ash); line-height: 1.65;
+  max-width: 340px;
+  opacity: 0; transform: translateY(10px);
+  margin-bottom: 2.8rem;
+}
+
+.p05-scroll-row {
+  display: flex; align-items: center; gap: .8rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+  opacity: 0;
+}
+.p05-scroll-line {
+  width: 0; height: 1px; background: var(--dim);
+  transition: width 1.2s var(--ease);
+}
+
+@media (max-width: 768px) {
+  .p05-frame { padding: 2rem 1.5rem 2rem; }
+  .p05-headline { font-size: clamp(40px, 11vw, 80px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p05-scroll-line { transition: none; }
+}
+
+
+/* ==========================================================================
+   CONCEPT 08 — THE AUDIT (product-thinking direction)
+   ========================================================================== */
+
+.p08-audit-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .20em; text-transform: uppercase; color: var(--dim);
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 4rem;
+  opacity: 0;
+}
+.p08-audit-id::before { content: ''; width: 24px; height: 1px; background: var(--dim); }
+
+/* Desktop / tablet grid — hidden on mobile */
+.p08-desktop { display: block; }
+
+.p08-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 5rem;
+  align-items: start;
+}
+
+/* Alternative headline (dim, small, sits above main) */
+.p08-alt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .12em; color: var(--dim);
+  margin-bottom: 1.2rem;
+  opacity: 0;
+}
+.p08-alt-label { margin-right: .4rem; color: var(--hairline); }
+
+/* Headline */
+.p08-headline {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(40px, 7.2vw, 104px);
+  font-weight: 300; line-height: .94;
+  letter-spacing: -0.035em; color: var(--bone);
+  margin-bottom: 2.5rem;
+}
+.p08-hl {
+  display: block;
+  opacity: 0; transform: translateY(10px);
+}
+
+/* Wraps the final word + pin — keeps them on the same line always */
+.p08-pin-anchor { white-space: nowrap; }
+
+/* Annotation pin (Figma comment bubble).
+   vertical-align: super avoids the inline-block baseline-shift issue
+   that would occur with overflow:hidden. No overflow used here. */
+.p08-pin {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--ember); color: var(--ink);
+  font-family: 'JetBrains Mono', monospace; font-size: 8px;
+  vertical-align: super; margin-left: .28em;
+  opacity: 0; transform: scale(0.85);
+  flex-shrink: 0;
+}
+
+/* Supporting copy */
+.p08-supporting {
+  font-size: 14px; color: var(--ash); line-height: 1.78;
+  max-width: 460px; margin-bottom: 2.5rem;
+  opacity: 0; transform: translateY(8px);
+}
+
+/* Byline */
+.p08-byline-block { opacity: 0; transform: translateY(8px); margin-bottom: 2.5rem; }
+.p08-designer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ash);
+}
+.p08-city {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .12em; color: var(--dim); margin-top: .3rem;
+}
+
+/* Assessment summary */
+.p08-assess {
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.8rem;
+  display: flex; flex-direction: column; gap: .55rem;
+  opacity: 0;
+}
+.p08-assess-row {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .10em; color: var(--dim);
+  display: flex; align-items: center; gap: .6rem;
+}
+.p08-assess-row::before { content: '✓'; color: var(--ember); font-size: 10px; flex-shrink: 0; }
+
+/* Findings panel */
+.p08-panel {
+  border: 1px solid var(--hairline);
+  opacity: 0; transform: translateY(14px);
+}
+.p08-panel-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--hairline);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: .20em; text-transform: uppercase; color: var(--dim);
+}
+.p08-row {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 .8rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--hairline);
+  align-items: start;
+}
+.p08-row:last-child { border-bottom: none; }
+.p08-row-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: .12em; color: var(--dim);
+  grid-row: span 2; align-self: start; padding-top: 2px;
+}
+.p08-row-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim);
+  margin-bottom: .25rem;
+}
+.p08-row-value { font-size: 13px; color: var(--ash); line-height: 1.55; }
+
+/* -- Mobile audit card ----------------------------------------------------- */
+.p08-mobile-card { display: none; }
+
+/* Simulated audit canvas fragment */
+.p08-frag {
+  border: 1px solid var(--hairline);
+  background: var(--surface);
+  padding: 1.2rem 1.2rem 2.4rem;
+  position: relative; overflow: hidden;
+  margin: 2rem 0 1.8rem;
+}
+.p08-frag-ui { display: flex; flex-direction: column; gap: .55rem; }
+.p08-frag-bar { height: 9px; background: var(--hairline); border-radius: 2px; opacity: .5; }
+.p08-frag-bar.w-full  { width: 100%; }
+.p08-frag-bar.w-3q    { width: 72%; }
+.p08-frag-bar.w-half  { width: 50%; }
+.p08-frag-bar.w-short { width: 34%; }
+.p08-frag-sep { height: 1px; background: var(--hairline); margin: .4rem 0; opacity: .4; }
+.p08-frag-row { display: flex; gap: .6rem; align-items: center; }
+.p08-frag-row .p08-frag-bar { flex: 1; }
+.p08-frag-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ember); flex-shrink: 0;
+}
+/* Annotation pin on the fragment */
+.p08-frag-pin {
+  position: absolute; top: 1rem; right: 1rem;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--ember); color: var(--ink);
+  font-family: 'JetBrains Mono', monospace; font-size: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+/* Annotation callout strip at bottom of fragment */
+.p08-frag-callout {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: .5rem 1.2rem;
+  border-top: 1px solid rgba(212,162,118,.2);
+  background: rgba(212,162,118,.05);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ember);
+}
+
+/* Mobile findings list */
+.p08-mobile-findings {
+  display: flex; flex-direction: column;
+  border-top: 1px solid var(--hairline);
+}
+.p08-mf {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0 .8rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--hairline);
+  align-items: start;
+}
+.p08-mf:last-child { border-bottom: none; }
+.p08-mf-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: .10em; color: var(--dim);
+  padding-top: 2px; grid-row: span 2;
+}
+.p08-mf-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim);
+  margin-bottom: .2rem;
+}
+.p08-mf-note { font-size: 13px; color: var(--ash); line-height: 1.5; }
+
+/* CTA */
+.p08-cta {
+  display: inline-flex; align-items: center; gap: .7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ash); text-decoration: none; margin-top: 2rem;
+  transition: color .25s;
+}
+.p08-cta::after { content: '→'; color: var(--ember); margin-left: .2rem; }
+.p08-cta:hover { color: var(--bone); }
+
+/* Responsive */
+@media (max-width: 960px) {
+  .p08-grid { grid-template-columns: 1fr; gap: 4rem; }
+  .p08-panel { max-width: 500px; }
+}
+@media (max-width: 768px) {
+  /* Swap to mobile card — desktop layout hidden entirely */
+  .p08-desktop { display: none; }
+  .p08-mobile-card { display: block; }
+  .p08-audit-id { margin-bottom: 3rem; }
+  .p08-headline { font-size: clamp(36px, 10.5vw, 64px); line-height: .96; margin-bottom: 0; }
+  .p08-row { padding: 1.2rem; }
+}
+
+
+/* ==========================================================================
+   RECOMMENDATION
+   ========================================================================== */
+#recommendation {
+  padding: 6rem var(--gutter) 8rem;
+}
+.rec-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim);
+  margin-bottom: 2rem;
+}
+.rec-heading {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(30px, 4vw, 52px); font-weight: 300; line-height: 1.1;
+  color: var(--bone); margin-bottom: 3rem; max-width: 680px;
+}
+.rec-heading em { font-style: italic; color: var(--ash); }
+.rec-body {
+  max-width: 680px;
+  display: flex; flex-direction: column; gap: 1.4rem;
+}
+.rec-body p { font-size: 15px; color: var(--ash); line-height: 1.85; }
+.rec-body strong { color: var(--bone); font-weight: 400; }
+</style>
+</head>
+<body>
+
+<svg id="grain" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+  <filter id="fn"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#fn)"/>
+</svg>
+
+<nav class="exp-nav" aria-label="Experiment navigation">
+  <span class="exp-nav-tag">Hero Experiments — 2026</span>
+  <ul class="exp-nav-links">
+    <li><a href="#concept-05">C05 — Empty State</a></li>
+    <li><a href="#concept-08">C08 — The Audit</a></li>
+    <li><a href="#recommendation">Rec</a></li>
+    <li><a href="index.html" class="back">← Portfolio</a></li>
+  </ul>
+</nav>
+
+
+<!-- =========================================================================
+     CONCEPT 05 — EMPTY STATE
+     ========================================================================= -->
+<section id="concept-05" class="proto-wrap" aria-label="Concept 05: Empty State">
+
+  <p class="proto-concept-tag">Concept 05 — Empty State</p>
+
+  <div class="p05-frame">
+    <span class="p05-frame-label" id="p05-label">// session / 001</span>
+    <span class="p05-frame-status" id="p05-status">Active</span>
+
+    <div class="p05-cursor-area">
+      <span class="p05-cursor" id="p05-cursor">▌</span>
+    </div>
+
+    <div class="p05-identity" id="p05-identity">
+      <div class="p05-name">Natthapath Damrongsri</div>
+      <div class="p05-role">UX / UI Designer — Bangkok, Thailand</div>
+    </div>
+
+    <hr class="p05-divider" id="p05-divider">
+
+    <h1 class="p05-headline" id="p05-headline">
+      Complexity,<br>made clear.
+    </h1>
+
+    <p class="p05-tagline" id="p05-tagline">
+      Building efficient interfaces<br>
+      for enterprise systems and product teams.
+    </p>
+
+    <div class="p05-scroll-row" id="p05-scroll">
+      <span class="p05-scroll-line" id="p05-scroll-line"></span>
+      Explore work
+    </div>
+  </div>
+
+</section>
+
+<div class="info-block">
+  <div class="info-tag">Concept 05 — Risks</div>
+  <h3 class="info-title">Empty State</h3>
+  <ul class="info-list">
+    <li>The ~2s empty moment before content resolves reads as slow load unless the blinking cursor signals intentionality. Users who don't read it as deliberate will assume something is broken.</li>
+    <li>Terminal-style cursor + monospace labels borrow from developer aesthetics. For a UX/UI designer, this can blur the positioning signal — "is this a developer portfolio?" Copy and frame must work harder to anchor the identity.</li>
+    <li>If JavaScript fails or loads slowly, the hero is literally blank. Requires a CSS <code style="font-family:inherit; color: var(--bone);">no-js</code> fallback to show content by default.</li>
+    <li>The bordered frame at very wide viewports (1400px+) floats in open space — needs max-width centering decisions or the frame metaphor breaks down.</li>
+    <li>On mobile, box-frame + monospace palette can read clinical rather than editorial. The copy carries all the warmth.</li>
+  </ul>
+</div>
+
+
+<!-- =========================================================================
+     CONCEPT 08 — THE AUDIT (product-thinking direction)
+     ========================================================================= -->
+<section id="concept-08" class="proto-wrap" aria-label="Concept 08: The Audit">
+
+  <p class="proto-concept-tag">Concept 08 — The Audit</p>
+
+  <div class="p08-audit-id" id="p08-audit-id">
+    Audit — Portfolio / 2026
+  </div>
+
+  <!-- DESKTOP layout -->
+  <div class="p08-desktop">
+    <div class="p08-grid">
+
+      <div>
+        <!-- Alternative headline shown in dim type for reference -->
+        <div class="p08-alt" id="p08-alt">
+          <span class="p08-alt-label">Alt —</span>"Before the redesign, comes the reading."
+        </div>
+
+        <h1 class="p08-headline">
+          <span class="p08-hl" id="p08-line-1">I read the <span class="p08-pin-anchor">product<span class="p08-pin" id="p08-pin-1">01</span></span></span>
+          <span class="p08-hl" id="p08-line-2">before I <span class="p08-pin-anchor">change it.<span class="p08-pin" id="p08-pin-2">04</span></span></span>
+        </h1>
+
+        <p class="p08-supporting" id="p08-supporting">
+          I design practical UX/UI systems by finding where workflows, states, decisions, and handoff stop making sense — then turning them into clearer product experiences.
+        </p>
+
+        <div class="p08-byline-block" id="p08-byline">
+          <div class="p08-designer">Natthapath Damrongsri</div>
+          <div class="p08-city">UX / UI Designer * Bangkok, Thailand</div>
+        </div>
+
+        <div class="p08-assess" id="p08-assess">
+          <div class="p08-assess-row">Read the product first.</div>
+          <div class="p08-assess-row">4 observations documented.</div>
+          <div class="p08-assess-row">Available for new engagements.</div>
+        </div>
+      </div>
+
+      <div class="p08-panel" id="p08-panel">
+        <div class="p08-panel-header">Audit findings — 04 items</div>
+
+        <div class="p08-row">
+          <span class="p08-row-num">01</span>
+          <div class="p08-row-label">Workflow</div>
+          <div class="p08-row-value">Repeated steps hide the real task.</div>
+        </div>
+
+        <div class="p08-row">
+          <span class="p08-row-num">02</span>
+          <div class="p08-row-label">State</div>
+          <div class="p08-row-value">The system shows status, but not meaning.</div>
+        </div>
+
+        <div class="p08-row">
+          <span class="p08-row-num">03</span>
+          <div class="p08-row-label">Decision</div>
+          <div class="p08-row-value">Primary action competes with review context.</div>
+        </div>
+
+        <div class="p08-row">
+          <span class="p08-row-num">04</span>
+          <div class="p08-row-label">Handoff</div>
+          <div class="p08-row-value">Logic exists, but is not documented.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MOBILE audit card — independent layout, not a collapsed desktop -->
+  <div class="p08-mobile-card" id="p08-mobile-card" aria-label="Mobile audit card">
+
+    <h1 class="p08-headline" id="p08-m-headline">
+      I read the product<br>before I change it.
+    </h1>
+
+    <!-- Simulated audit canvas fragment -->
+    <div class="p08-frag" id="p08-frag" aria-hidden="true">
+      <div class="p08-frag-ui">
+        <div class="p08-frag-bar w-full"></div>
+        <div class="p08-frag-sep"></div>
+        <div class="p08-frag-row">
+          <span class="p08-frag-dot"></span>
+          <div class="p08-frag-bar w-3q"></div>
+        </div>
+        <div class="p08-frag-row">
+          <div class="p08-frag-bar w-half"></div>
+          <div class="p08-frag-bar w-short"></div>
+        </div>
+        <div class="p08-frag-bar w-3q"></div>
+        <div class="p08-frag-row">
+          <span class="p08-frag-dot"></span>
+          <div class="p08-frag-bar w-half"></div>
+        </div>
+      </div>
+      <span class="p08-frag-pin">01</span>
+      <div class="p08-frag-callout">Workflow conflict identified</div>
+    </div>
+
+    <div class="p08-mobile-findings" id="p08-m-findings">
+      <div class="p08-mf">
+        <span class="p08-mf-num">01</span>
+        <div class="p08-mf-label">Workflow</div>
+        <div class="p08-mf-note">Repeated steps hide the real task.</div>
+      </div>
+      <div class="p08-mf">
+        <span class="p08-mf-num">02</span>
+        <div class="p08-mf-label">State</div>
+        <div class="p08-mf-note">The system shows status, but not meaning.</div>
+      </div>
+      <div class="p08-mf">
+        <span class="p08-mf-num">03</span>
+        <div class="p08-mf-label">Decision</div>
+        <div class="p08-mf-note">Primary action competes with review context.</div>
+      </div>
+      <div class="p08-mf">
+        <span class="p08-mf-num">04</span>
+        <div class="p08-mf-label">Handoff</div>
+        <div class="p08-mf-note">Logic exists, but is not documented.</div>
+      </div>
+    </div>
+
+    <a href="index.html#work" class="p08-cta" id="p08-cta">See what happened next</a>
+
+  </div>
+
+</section>
+
+<div class="info-block">
+  <div class="info-tag">Concept 08 — Risks (updated direction)</div>
+  <h3 class="info-title">The Audit — product-thinking framing</h3>
+  <ul class="info-list">
+    <li>The annotation pins (01 on "product", 04 on "change it.") skip findings 02 and 03 — creates a discontinuity between pin numbering and the panel. Options: use a single pin showing total count ("04"), or add pins only to the finding rows and remove headline pins.</li>
+    <li>The four findings (Workflow / State / Decision / Handoff) describe a generalised pattern, not a named project. Visitors will ask: "Which product did you audit?" The CTA "See what happened next" must land on a real case study — a placeholder kills the credibility built by the hero.</li>
+    <li>The supporting copy sentence is doing heavy lifting at 36 words. Target 18–22 for a hero context. Suggested tighter version: "I find where workflows, states, and decisions stop making sense — then redesign them into clearer product experiences."</li>
+    <li>The mobile audit fragment (CSS-only ghost UI) communicates the visual language well as a placeholder but reads abstract. A real cropped screenshot — a workflow map, a whiteboard audit, or a Figma canvas fragment — would sharpen "I looked at this specific product."</li>
+    <li>On tablet (769px–960px), the desktop layout stacks the panel below the left column at up to 500px wide. At this width the headline is still large (clamped ~72px) — verify the visual weight balance doesn't feel top-heavy.</li>
+  </ul>
+</div>
+
+
+<!-- =========================================================================
+     RECOMMENDATION
+     ========================================================================= -->
+<section id="recommendation" aria-label="Recommendation">
+  <div class="rec-tag">— Recommendation</div>
+  <h2 class="rec-heading">The direction is right.<br><em>Three things to sharpen before shipping.</em></h2>
+  <div class="rec-body">
+    <p><strong>The copy shift works.</strong> "I read the product before I change it" is more specific, more confident, and immediately positions you as a process-first designer — not someone who makes things look good. The findings panel (Workflow / State / Decision / Handoff) gives the hero proof, not just claim. The form is already starting to demonstrate the message.</p>
+    <p><strong>Resolve the pin-to-finding connection.</strong> Currently pins 01 and 04 appear on the headline but the panel has four rows. The gap between those numbers creates a question: "where are 02 and 03?" Either remove the numbered pins from the headline and use a single unlabelled mark, or move to four pins — one per key concept word (workflow, states, decisions, handoff) in the supporting copy rather than the headline. The visual metaphor is strong; the specific numbers need to be internally consistent.</p>
+    <p><strong>Tighten the supporting copy.</strong> At 36 words it reads like a brief, not a hero. Target 18–22: "I find where workflows, states, and decisions stop making sense — then redesign them into clearer product experiences." Every word cut makes the finding rows land harder.</p>
+    <p><strong>The mobile audit card is the right instinct.</strong> Headline → fragment → findings → CTA is a better sequence than stacked desktop columns. The one missing piece is a real artefact in the fragment slot — a cropped screenshot of an actual audit canvas, wireframe annotation, or Figma inspection view would make "I read the product" feel specific rather than claimed. That single image is worth more than any copy change.</p>
+  </div>
+</section>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+'use strict';
+
+var EASE = 'cubic-bezier(0.22,1,0.36,1)';
+gsap.registerPlugin(ScrollTrigger);
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+
+/* --------------------------------------------------------------------------
+   CONCEPT 05 — EMPTY STATE: entrance sequence
+   -------------------------------------------------------------------------- */
+(function () {
+  var frameLabel  = document.getElementById('p05-label');
+  var frameStatus = document.getElementById('p05-status');
+  var cursor      = document.getElementById('p05-cursor');
+  var identity    = document.getElementById('p05-identity');
+  var divider     = document.getElementById('p05-divider');
+  var headline    = document.getElementById('p05-headline');
+  var tagline     = document.getElementById('p05-tagline');
+  var scrollRow   = document.getElementById('p05-scroll');
+  var scrollLine  = document.getElementById('p05-scroll-line');
+
+  if (reduced) {
+    [frameLabel, frameStatus, cursor, identity, headline, tagline, scrollRow].forEach(function (el) {
+      if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
+    });
+    if (divider) { divider.style.opacity = '1'; divider.style.transform = 'none'; }
+    if (scrollLine) scrollLine.style.width = '36px';
+    return;
+  }
+
+  // Set divider starting state via GSAP so CSS and GSAP transforms don't conflict
+  gsap.set(divider, { scaleX: 0, opacity: 0 });
+
+  var tl = gsap.timeline({ delay: 0.4 });
+
+  tl
+    // Frame chrome: empty artboard becomes "ready"
+    .to([frameLabel, frameStatus], { opacity: 1, duration: 0.45, ease: 'power2.out', stagger: 0.08 })
+
+    // Cursor materialises into the blank frame
+    .to(cursor, { opacity: 1, duration: 0.12 }, '+=0.15')
+    .add(function () { cursor.classList.add('is-blinking'); })
+
+    // Empty state: cursor blinks alone for 1.1s
+    .add(function () {}, '+=1.1')
+
+    // Content resolves — cursor fades, identity appears
+    .add(function () { cursor.classList.remove('is-blinking'); })
+    .to(cursor, { opacity: 0, duration: 0.2 })
+    .to(identity, { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.05')
+
+    // Divider traces left → right
+    .to(divider, { opacity: 1, scaleX: 1, duration: 0.85, ease: EASE }, '-=0.25')
+
+    // Headline arrives from below
+    .to(headline, { opacity: 1, y: 0, duration: 0.95, ease: EASE }, '-=0.5')
+
+    // Tagline
+    .to(tagline, { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' }, '-=0.5')
+
+    // Scroll row
+    .to(scrollRow, { opacity: 1, duration: 0.55, ease: 'power2.out' }, '-=0.25')
+    .add(function () {
+      if (scrollLine) scrollLine.style.width = '36px';
+    }, '+=0.1');
+})();
+
+
+/* --------------------------------------------------------------------------
+   CONCEPT 08 — THE AUDIT: scroll-triggered entrance (desktop + mobile)
+   -------------------------------------------------------------------------- */
+(function () {
+  // Desktop elements
+  var badge      = document.getElementById('p08-audit-id');
+  var altLine    = document.getElementById('p08-alt');
+  var line1      = document.getElementById('p08-line-1');
+  var line2      = document.getElementById('p08-line-2');
+  var pin1       = document.getElementById('p08-pin-1');
+  var pin2       = document.getElementById('p08-pin-2');
+  var supporting = document.getElementById('p08-supporting');
+  var byline     = document.getElementById('p08-byline');
+  var assess     = document.getElementById('p08-assess');
+  var panel      = document.getElementById('p08-panel');
+
+  // Mobile card elements
+  var mHeadline  = document.getElementById('p08-m-headline');
+  var mFrag      = document.getElementById('p08-frag');
+  var mFindings  = document.getElementById('p08-m-findings');
+  var mCta       = document.getElementById('p08-cta');
+
+  var isDesktop = window.innerWidth > 768;
+
+  if (reduced) {
+    // Make everything visible immediately, both layouts
+    [badge, altLine, line1, line2, supporting, byline, assess, panel,
+     mHeadline, mFrag, mFindings, mCta].forEach(function (el) {
+      if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
+    });
+    [pin1, pin2].forEach(function (el) {
+      if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
+    });
+    return;
+  }
+
+  // Set GSAP initial states for mobile elements (CSS doesn't set them)
+  if (mHeadline) gsap.set(mHeadline, { opacity: 0, y: 16 });
+  if (mFrag)     gsap.set(mFrag,     { opacity: 0, y: 12 });
+  if (mFindings) gsap.set(mFindings, { opacity: 0 });
+  if (mCta)      gsap.set(mCta,      { opacity: 0, y: 8 });
+
+  ScrollTrigger.create({
+    trigger: '#concept-08',
+    start: 'top 65%',
+    once: true,
+    onEnter: function () {
+      var tl = gsap.timeline();
+
+      // Badge: slow fade, sets the audit tone before anything else arrives
+      tl.to(badge, { opacity: 1, duration: 0.9, ease: 'power2.out' });
+
+      if (isDesktop) {
+        tl
+          // Alt headline dims in — reference copy, not focus
+          .to(altLine, { opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.3')
+          // Headline lines rise individually at reading pace
+          .to(line1, { opacity: 1, y: 0, duration: 1.1, ease: EASE }, '-=0.2')
+          .to(line2, { opacity: 1, y: 0, duration: 1.1, ease: EASE }, '-=0.8')
+          // Pins surface without spring or bounce — placed, not thrown
+          .to([pin1, pin2], { opacity: 1, scale: 1, duration: 0.65, stagger: 0.35, ease: 'power2.out' }, '-=0.55')
+          // Supporting copy
+          .to(supporting, { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out' }, '-=0.4')
+          // Byline
+          .to(byline, { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' }, '-=0.55')
+          // Assessment
+          .to(assess, { opacity: 1, duration: 0.75, ease: 'power2.out' }, '-=0.45')
+          // Findings panel emerges alongside — not after, not before — quiet overlap
+          .to(panel, { opacity: 1, y: 0, duration: 1.1, ease: EASE }, '-=0.9');
+      } else {
+        // Mobile card: each layer surfaces in turn, unhurried
+        tl
+          .to(mHeadline, { opacity: 1, y: 0, duration: 1.1, ease: EASE }, '-=0.2')
+          .to(mFrag,     { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' }, '-=0.4')
+          .to(mFindings, { opacity: 1, duration: 0.85, ease: 'power2.out' }, '-=0.35')
+          .to(mCta,      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.3');
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
